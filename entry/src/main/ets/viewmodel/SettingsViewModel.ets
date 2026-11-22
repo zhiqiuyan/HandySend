@@ -12,6 +12,8 @@ import {
   setLocale,
   setHideTabBarOnScroll,
   isHideTabBarOnScroll,
+  setNavBarStyle,
+  getNavBarStyle,
   setAdvancedSettings,
   setPort,
   setMulticastGroup,
@@ -129,6 +131,7 @@ import {
   DEFAULT_THEME,
   DEFAULT_LOCALE,
   DEFAULT_HIDE_TAB_BAR_ON_SCROLL,
+  DEFAULT_NAV_BAR_STYLE,
   DEFAULT_CREATE_CHECKSUMS,
   DEFAULT_VERIFY_CHECKSUMS,
   DEFAULT_ADVANCED_SETTINGS,
@@ -225,6 +228,7 @@ export class SettingsViewModel {
   @Trace public autoOpenSessionDetail: boolean = DEFAULT_AUTO_OPEN_SESSION_DETAIL
   @Trace public serverNeedsRestart: boolean = false
   @Trace public hideTabBarOnScroll: boolean = DEFAULT_HIDE_TAB_BAR_ON_SCROLL
+  @Trace public navBarStyle: string = DEFAULT_NAV_BAR_STYLE
   @Trace public theme: string = DEFAULT_THEME
   @Trace public locale: string = DEFAULT_LOCALE
   @Trace public serverReady: boolean = false
@@ -278,6 +282,7 @@ export class SettingsViewModel {
     this.theme = getTheme();
     this.locale = getLocale();
     this.hideTabBarOnScroll = isHideTabBarOnScroll();
+    this.navBarStyle = getNavBarStyle();
     this.createChecksums = isCreateChecksums();
     this.verifyChecksums = isVerifyChecksums();
     this.autoClearStaged = isAutoClearStagedAfterSend();
@@ -667,6 +672,11 @@ export class SettingsViewModel {
     setHideTabBarOnScroll(on);
   }
 
+  setNavBarStyleValue(style: string): void {
+    this.navBarStyle = style;
+    setNavBarStyle(style);
+  }
+
   // 设置语言（语言弹窗使用）：更新 UI 状态并调用 AppService.setLocale 完成持久化与切换
   setLocaleValue(value: string): void {
     this.locale = value;
@@ -823,6 +833,8 @@ export class SettingsViewModel {
     setTheme(DEFAULT_THEME);
     this.hideTabBarOnScroll = DEFAULT_HIDE_TAB_BAR_ON_SCROLL;
     setHideTabBarOnScroll(DEFAULT_HIDE_TAB_BAR_ON_SCROLL);
+    this.navBarStyle = DEFAULT_NAV_BAR_STYLE;
+    setNavBarStyle(DEFAULT_NAV_BAR_STYLE);
     // LocalSend 总开关复位：值变化时才启停服务器，避免无谓重启
     let localSendWasEnabled: boolean = this.localSendEnabled;
     this.localSendEnabled = DEFAULT_LOCALSEND_ENABLED;

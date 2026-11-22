@@ -457,6 +457,18 @@
       "value": "跟隨系統"
     },
     {
+      "name": "nav_bar_style_label",
+      "value": "導覽列樣式"
+    },
+    {
+      "name": "nav_bar_style_traditional",
+      "value": "傳統欄"
+    },
+    {
+      "name": "nav_bar_style_floating",
+      "value": "懸浮欄"
+    },
+    {
       "name": "hide_tab_bar_on_scroll_label",
       "value": "捲動時隱藏頁籤"
     },

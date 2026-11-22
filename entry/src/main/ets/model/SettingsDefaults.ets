@@ -30,6 +30,9 @@ export const DEFAULT_LOCALE: string = '';
 
 export const DEFAULT_HIDE_TAB_BAR_ON_SCROLL: boolean = false;
 
+// 导航栏样式：传统平铺底栏为默认；'floating' 为悬浮栏
+export const DEFAULT_NAV_BAR_STYLE: string = 'traditional';
+
 // ── 设备身份 ──
 // 空字符串时根据系统信息自动检测
 export const DEFAULT_CUSTOM_ALIAS: string = '';

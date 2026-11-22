@@ -457,6 +457,18 @@
       "value": "Follow system"
     },
     {
+      "name": "nav_bar_style_label",
+      "value": "Navigation bar style"
+    },
+    {
+      "name": "nav_bar_style_traditional",
+      "value": "Standard"
+    },
+    {
+      "name": "nav_bar_style_floating",
+      "value": "Floating"
+    },
+    {
       "name": "hide_tab_bar_on_scroll_label",
       "value": "Hide tab bar on scroll"
     },

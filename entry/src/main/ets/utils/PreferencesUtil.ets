@@ -33,6 +33,9 @@ export const KEY_LOCALE: string = 'locale';
 
 export const KEY_HIDE_TAB_BAR_ON_SCROLL: string = 'hideTabBarOnScroll';
 
+// 导航栏样式：'traditional'（平铺底栏，默认）/ 'floating'（悬浮栏）
+export const KEY_NAV_BAR_STYLE: string = 'navBarStyle';
+
 export const KEY_CREATE_CHECKSUMS: string = 'createChecksums';
 
 export const KEY_VERIFY_CHECKSUMS: string = 'verifyChecksums';

@@ -45,6 +45,7 @@ import {
   stopLocalServer,
   restoreWebService,
   isHideTabBarOnScroll,
+  getNavBarStyle,
   startMtaDiscoveryScan,
   stopMtaDiscoveryScan,
   saveMediaToGallery,
@@ -65,6 +66,7 @@ import {
   isSaveToGallery, getLocalSendEnabled, getMtaEnabled,
   getWebSendAllowed, getNotifiedProtocolSignature, setNotifiedProtocolSignature
 } from '../service/repository/SettingsRepository';
+import { DEFAULT_NAV_BAR_STYLE } from '../model/SettingsDefaults';
 import {
   querySessions, getSession, getPendingSessionIds, hasSessionOrHistory, subscribeSessions,
   unsubscribeSessions
@@ -112,6 +114,9 @@ struct MainTabFloating {
   // 底部系统导航条避让高度（vp）：>0 表示存在系统导航条。窗口在全屏/小窗/分屏间切换、
   // 旋转或折叠时该值会变化，故监听 avoidAreaChange 动态更新；底部浮动页签栏间距据此条件化
   @Local private naviIndicatorHeight: number = 0;
+  // 导航栏样式：'traditional'（默认，HdsTabs 官方平铺底栏）/ 'floating'（悬浮栏）。
+  // 设置变更后经变更总线同步本字段，触发页签容器即时重建
+  @Local private navBarStyle: string = DEFAULT_NAV_BAR_STYLE;
   private avoidAreaWindow: window.Window | null = null;
   private avoidAreaChangeCallback: (options: window.AvoidAreaOptions) => void =
     (options: window.AvoidAreaOptions): void => {
@@ -173,6 +178,12 @@ struct MainTabFloating {
   // 设置变化回调：协议开关实际变化时复位提示关闭状态，使提示内容随开关更新
   //（部分关闭提示的已展示签名持久化，同一状态只在下次启动提示一次）。
   private settingsChangedCallback: () => void = (): void => {
+    // 导航栏样式即时切换：@Local 赋值触发页签容器重建；重建后新栏默认显示，同步隐藏标志
+    let nextNavBarStyle: string = getNavBarStyle();
+    if (nextNavBarStyle !== this.navBarStyle) {
+      this.navBarStyle = nextNavBarStyle;
+      this.isTabHidden = false;
+    }
     let signature: string =
       `${getLocalSendEnabled()}|${getMtaEnabled()}|${getWebSendAllowed()}`;
     if (signature !== this.protocolToggleSignature) {
@@ -199,6 +210,8 @@ struct MainTabFloating {
     let context = this.getUIContext().getHostContext() as common.UIAbilityContext;
     // 偏好读取保留在首帧路径：首帧布局形态与设置值依赖它
     initAllPreferences(context);
+    // 字段初始化早于偏好初始化，此处回读一次持久化样式，保证悬浮栏设置冷启动首帧即生效
+    this.navBarStyle = getNavBarStyle();
 
     // 相册保存自动提示回调：订阅本身延后到首帧之后，但回调字段须在订阅前完成赋值
     this.galleryPromptCallback = (): void => {
@@ -1416,6 +1429,41 @@ struct MainTabFloating {
   }
 
   /**
+   * 传统底栏形态的页签容器（默认）：HdsTabs 官方平铺样式，不设置 barFloatingStyle
+   *（无圆角悬浮、系统材质与底部渐变遮罩）。保留 barOverlap(true) 以沿用现有内容的
+   * tabBarClearance 底部避让，避免页签栏与内容间距叠加成双倍空白。
+   */
+  @Builder
+  traditionalTabs() {
+    HdsTabs({ controller: this.hdsController, index: this.currentTabIndex }) {
+      this.sendTab()
+      this.transferTab()
+      this.settingsTab()
+    }
+    .animationDuration(DesignTokens.animation.durationNormal)
+    .clip(false)
+    .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.TOP, SafeAreaEdge.BOTTOM])
+    .barHeight(56)
+    .barOverlap(true)
+    .barPosition(BarPosition.End)
+    .vertical(false)
+    .onChange((index: number) => {
+      this.currentTabIndex = index;
+      this.showTabBar();
+      this.updateMtaScanByVisibility();
+      this.refreshLocalInterfacesIfHomeVisible();
+    })
+    .onAnimationStart((index: number, targetIndex: number) => {
+      this.currentTabIndex = targetIndex;
+      if (index !== targetIndex) {
+        this.restoreTabScroll(targetIndex);
+      }
+    })
+    .width('100%')
+    .height('100%')
+  }
+
+  /**
    * 宽屏形态的页签容器：导航已由常驻宽侧边栏承担，故隐藏页签栏
    * （页签栏高度归零且禁用滑动切换），仅保留 TabContent 的切换回调与滚动位置保持链路。
    */
@@ -1459,7 +1507,7 @@ struct MainTabFloating {
   @Builder
   navigationContent() {
     // 页签容器形态：宽屏（lg/xl 且非平板竖屏、套件能力可用）→ 常驻宽侧边栏 + 隐藏页签栏的内容区；
-    // 其余情况（手机、平板竖屏 600~840vp 及以上）→ 底部浮动水平栏
+    // 其余情况（手机、平板竖屏 600~840vp 及以上）→ 底部水平栏，样式按用户偏好：传统平铺（默认）/ 悬浮
     // 窗口高度不参与形态判断：矮窗下侧边栏同样可用，且比底部页签栏更省竖向空间
     if (this.useWidescreenSideBar()) {
       Row() {
@@ -1491,9 +1539,14 @@ struct MainTabFloating {
       // 安全区扩展逐层设置：侧边栏底色与内容区背景均需铺满系统栏区域
       .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.TOP, SafeAreaEdge.BOTTOM])
     } else {
+      // 窄屏按用户偏好选择底栏样式：传统平铺栏（默认）或悬浮栏
       Stack({ alignContent: Alignment.Bottom }) {
         Column() {
-          this.floatingTabs()
+          if (this.navBarStyle === 'floating') {
+            this.floatingTabs()
+          } else {
+            this.traditionalTabs()
+          }
         }
         .width('100%')
         .height('100%')
@@ -1514,7 +1567,7 @@ struct MainTabFloating {
     Stack({ alignContent: Alignment.TopStart }) {
       // 导航容器始终为页面根容器；两种形态仅内容区不同。
       // 宽屏（平板横屏 / 折叠屏展开 / PC）时内容区为「常驻宽侧边栏 + 单栏内容」两段式布局，
-      // 其余情况（手机、平板竖屏、套件能力缺失）沿用底部浮动页签栏形态
+      // 其余情况（手机、平板竖屏、套件能力缺失）按偏好使用传统底栏（默认）或悬浮页签栏
       HdsNavigation(this.pathStack) {
         this.navigationContent()
       }

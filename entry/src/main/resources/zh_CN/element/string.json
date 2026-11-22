@@ -457,6 +457,18 @@
       "value": "跟随系统"
     },
     {
+      "name": "nav_bar_style_label",
+      "value": "导航栏样式"
+    },
+    {
+      "name": "nav_bar_style_traditional",
+      "value": "传统栏"
+    },
+    {
+      "name": "nav_bar_style_floating",
+      "value": "悬浮栏"
+    },
+    {
       "name": "hide_tab_bar_on_scroll_label",
       "value": "滚动时隐藏页签"
     },

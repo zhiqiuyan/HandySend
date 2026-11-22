@@ -13,6 +13,7 @@ import {
   KEY_THEME,
   KEY_LOCALE,
   KEY_HIDE_TAB_BAR_ON_SCROLL,
+  KEY_NAV_BAR_STYLE,
   KEY_CREATE_CHECKSUMS,
   KEY_VERIFY_CHECKSUMS,
   KEY_AUTO_CLEAR_STAGED,
@@ -51,6 +52,7 @@ import {
   DEFAULT_THEME,
   DEFAULT_LOCALE,
   DEFAULT_HIDE_TAB_BAR_ON_SCROLL,
+  DEFAULT_NAV_BAR_STYLE,
   DEFAULT_CREATE_CHECKSUMS,
   DEFAULT_VERIFY_CHECKSUMS,
   DEFAULT_ADVANCED_SETTINGS,
@@ -94,6 +96,7 @@ let receiveDirectoryUri: string = DEFAULT_RECEIVE_DIRECTORY_URI;
 let theme: string = DEFAULT_THEME;
 let locale: string = DEFAULT_LOCALE;
 let hideTabBarOnScroll: boolean = DEFAULT_HIDE_TAB_BAR_ON_SCROLL;
+let navBarStyle: string = DEFAULT_NAV_BAR_STYLE;
 let createChecksums: boolean = DEFAULT_CREATE_CHECKSUMS;
 let verifyChecksums: boolean = DEFAULT_VERIFY_CHECKSUMS;
 let advancedSettings: boolean = DEFAULT_ADVANCED_SETTINGS;
@@ -147,6 +150,10 @@ export function loadFromPreferences(): void {
   theme = preferencesRepo.getString(KEY_THEME, DEFAULT_THEME);
   locale = preferencesRepo.getString(KEY_LOCALE, DEFAULT_LOCALE);
   hideTabBarOnScroll = preferencesRepo.getBoolean(KEY_HIDE_TAB_BAR_ON_SCROLL, DEFAULT_HIDE_TAB_BAR_ON_SCROLL);
+  // 非法持久化值回退默认（传统栏），避免升级/手改配置后主页无栏
+  let savedNavBarStyle: string = preferencesRepo.getString(KEY_NAV_BAR_STYLE, DEFAULT_NAV_BAR_STYLE);
+  navBarStyle = (savedNavBarStyle === 'traditional' || savedNavBarStyle === 'floating') ?
+    savedNavBarStyle : DEFAULT_NAV_BAR_STYLE;
   createChecksums = preferencesRepo.getBoolean(KEY_CREATE_CHECKSUMS, DEFAULT_CREATE_CHECKSUMS);
   verifyChecksums = preferencesRepo.getBoolean(KEY_VERIFY_CHECKSUMS, DEFAULT_VERIFY_CHECKSUMS);
   advancedSettings = preferencesRepo.getBoolean(KEY_ADVANCED_SETTINGS, DEFAULT_ADVANCED_SETTINGS);
@@ -598,6 +605,17 @@ export function setHideTabBarOnScroll(enabled: boolean): void {
 
 export function isHideTabBarOnScroll(): boolean {
   return hideTabBarOnScroll;
+}
+
+/** 导航栏样式：'traditional'（默认，平铺底栏）/ 'floating'（悬浮栏）。 */
+export function setNavBarStyle(style: string): void {
+  navBarStyle = style === 'floating' ? 'floating' : 'traditional';
+  preferencesRepo.setString(KEY_NAV_BAR_STYLE, navBarStyle);
+  notifyChange();
+}
+
+export function getNavBarStyle(): string {
+  return navBarStyle;
 }
 
 // ── 校验和设置 ──
