@@ -154,6 +154,8 @@ export struct VerifyPage {
     }
     // 子页面容器背景覆盖至标题栏区域：无内容经过时标题栏底色与页面背景一致，不露出系统默认底色
     .backgroundColor($r('app.color.page_background'))
+    // 状态栏模糊渐变：布局级扩展到状态栏区域，标题栏沉浸背板（材质/滚动模糊）覆盖状态栏
+    .ignoreLayoutSafeArea([LayoutSafeAreaType.SYSTEM], [LayoutSafeAreaEdge.TOP])
     .titleBar(buildImmersiveTitleBar({ title: $r('app.string.verify_title') }))
     .titleMode(HdsNavDestinationTitleMode.MINI)
     .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.TOP, SafeAreaEdge.BOTTOM])

@@ -1530,6 +1530,8 @@ struct MainTabFloating {
       .backgroundColor($r('app.color.page_background'))
       // 主页面为根页面无返回语义：隐藏返回入口；工具栏不使用
       .titleMode(HdsNavigationTitleMode.MINI)
+      // 状态栏模糊渐变：布局级扩展到状态栏区域（HDS 标题栏状态栏感知，底部导航条避让不受影响）
+      .ignoreLayoutSafeArea([LayoutSafeAreaType.SYSTEM], [LayoutSafeAreaEdge.TOP])
       .titleBar(this.mainTitleBarOptions())
       .hideBackButton(true)
       .hideToolBar(true)

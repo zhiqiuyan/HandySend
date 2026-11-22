@@ -32,7 +32,7 @@ const POLL_INTERVAL_MS: number = 100
 // 测试用可写 saveDir：App 沙箱 cache 子目录
 // Rust reset_security_context 需要写盘保存 TLS 身份，
 // 使用 App 沙箱 cache 目录确保写盘成功
-export const TEST_SAVE_DIR: string = '/data/app/el2/100/base/com.springtwr.handysend/cache/handysend_test/'
+export const TEST_SAVE_DIR: string = '/data/app/el2/100/base/zhiqiuyan.HarmonyShare.app/cache/handysend_test/'
 
 // ── 服务器启停 ──
 
