@@ -1434,8 +1434,8 @@ struct MainTabFloating {
    * 传统底栏形态的页签容器（默认）：HdsTabs 官方平铺样式，不设置 barFloatingStyle
    *（无圆角悬浮、系统材质与底部渐变遮罩）。保留 barOverlap(true) 以沿用现有内容的
    * tabBarClearance 底部避让，避免页签栏与内容间距叠加成双倍空白。
-   * 栏背景用 card_background 色 token 并关闭背景模糊：浅色模式纯白、深色模式深色卡片色，
-   * 内容不会从栏下透出；系统导航条区域由根容器同色块补齐，形成一体化。
+   * 原生页签栏隐藏（barHeight 0），底栏由根容器的 traditionalBottomBar 绘制：
+   * 纯色不透明、图标文字完整、下端与系统导航条区域一体化。
    */
   @Builder
   traditionalTabs() {
@@ -1447,12 +1447,13 @@ struct MainTabFloating {
     .animationDuration(DesignTokens.animation.durationNormal)
     .clip(false)
     .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.TOP, SafeAreaEdge.BOTTOM])
-    .barHeight(56)
+    // 原生栏不渲染（高度 0）：其默认自适应材质无法设为纯色，也不受 barBackgroundColor 控制；
+    // 底栏改由根容器的 traditionalBottomBar 用系统组件绘制，保留本容器的切换与滚动位置链路
+    .barHeight(0)
     .barOverlap(true)
     .barPosition(BarPosition.End)
     .vertical(false)
-    .barBackgroundColor($r('app.color.card_background'))
-    .barBackgroundBlurStyle(BlurStyle.NONE)
+    .scrollable(false)
     .onChange((index: number) => {
       this.currentTabIndex = index;
       this.showTabBar();
@@ -1467,6 +1468,81 @@ struct MainTabFloating {
     })
     .width('100%')
     .height('100%')
+  }
+
+  /**
+   * 传统底栏（系统组件实现）：HDS 原生栏为自适应材质，指定纯色背景在真机不生效；
+   * 此处用 ArkUI 基础组件按原生栏同款资源与配色绘制纯色不透明底栏，
+   * 覆盖所有子页面（含 NavDestination），下端与系统导航条区域同色一体化。
+   */
+  @Builder
+  traditionalBottomBar() {
+    Stack({ alignContent: Alignment.Bottom }) {
+      Row() {
+        // 发送
+        Column() {
+          Image($r('app.media.ic_tab_send'))
+            .width(DesignTokens.size.iconSm)
+            .height(DesignTokens.size.iconSm)
+            .fillColor(this.currentTabIndex === 0 ? $r('app.color.accent_blue') : $r('app.color.text_secondary'))
+          Text($r('app.string.tab_send'))
+            .fontSize(DesignTokens.font.bodyS)
+            .fontColor(this.currentTabIndex === 0 ? $r('app.color.accent_blue') : $r('app.color.text_secondary'))
+            .margin({ top: DesignTokens.space.tiny })
+        }
+        .layoutWeight(1)
+        .height('100%')
+        .justifyContent(FlexAlign.Center)
+        .onClick(() => this.switchToTab(0))
+        .id('tab_bar_send')
+
+        // 任务（标签随任务数量动态变化，与原生栏同款）
+        Column() {
+          Image($r('app.media.ic_tab_transfer'))
+            .width(DesignTokens.size.iconSm)
+            .height(DesignTokens.size.iconSm)
+            .fillColor(this.currentTabIndex === 1 ? $r('app.color.accent_blue') : $r('app.color.text_secondary'))
+          Text(this.transferTabLabel())
+            .fontSize(DesignTokens.font.bodyS)
+            .fontColor(this.currentTabIndex === 1 ? $r('app.color.accent_blue') : $r('app.color.text_secondary'))
+            .margin({ top: DesignTokens.space.tiny })
+        }
+        .layoutWeight(1)
+        .height('100%')
+        .justifyContent(FlexAlign.Center)
+        .onClick(() => this.switchToTab(1))
+        .id('tab_bar_transfer')
+
+        // 设置
+        Column() {
+          Image($r('app.media.ic_tab_settings'))
+            .width(DesignTokens.size.iconSm)
+            .height(DesignTokens.size.iconSm)
+            .fillColor(this.currentTabIndex === 2 ? $r('app.color.accent_blue') : $r('app.color.text_secondary'))
+          Text($r('app.string.tab_settings'))
+            .fontSize(DesignTokens.font.bodyS)
+            .fontColor(this.currentTabIndex === 2 ? $r('app.color.accent_blue') : $r('app.color.text_secondary'))
+            .margin({ top: DesignTokens.space.tiny })
+        }
+        .layoutWeight(1)
+        .height('100%')
+        .justifyContent(FlexAlign.Center)
+        .onClick(() => this.switchToTab(2))
+        .id('tab_bar_settings')
+      }
+      .width('100%')
+      .height(56)
+      .backgroundColor($r('app.color.card_background'))
+      // 纯色铺满系统导航条区域：Expand 绘制级扩展，布局仍避让系统栏，不遮挡手势
+      .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.BOTTOM])
+    }
+    .width('100%')
+    .height('100%')
+    // 滚动时整栏收起（与原生 applyHideAnimation 等价，用位移实现）
+    .offset({ y: this.isTabHidden ? 80 : 0 })
+    .animation({ duration: DesignTokens.animation.durationNormal, curve: Curve.FastOutSlowIn })
+    // 空白区域不拦截触摸，避免遮挡下方页面交互
+    .hitTestBehavior(HitTestMode.None)
   }
 
   /**
@@ -1614,20 +1690,13 @@ struct MainTabFloating {
         this.updateMtaScanByVisibility();
       })
 
-      // 系统导航条区域与底部导航栏同色一体化：覆盖在所有子页面之上（含推入的
-      // 设置页等 NavDestination），避免各页背景铺到屏幕底部造成栏下色块断裂。
-      // 色值走 card_background token：浅色纯白、深色深色卡片色，随深浅模式自动切换。
-      // HitTestMode.None 不拦截触摸，系统返回手势与各页交互不受影响。
-      Stack({ alignContent: Alignment.Bottom }) {
-        Column()
-          .width('100%')
-          .height(this.naviIndicatorHeight)
-          .backgroundColor($r('app.color.card_background'))
-          .hitTestBehavior(HitTestMode.None)
+      // 传统底栏（默认）：用系统组件绘制于所有子页面之上（含推入的设置页等 NavDestination）。
+      // HDS 原生栏默认自适应材质无法设为纯色，barBackgroundColor 在真机不生效，故原生栏高度归零，
+      // 此处用 Row + Image + Text 等价实现：纯色 card_background 不透明、浅色纯白/深色深色卡片色；
+      // 图标文字按选中态着色，点击走与原生栏一致的 switchToTab，系统导航条区域同色一体化。
+      if (!this.useWidescreenSideBar() && this.navBarStyle !== 'floating') {
+        this.traditionalBottomBar()
       }
-      .width('100%')
-      .height('100%')
-      .hitTestBehavior(HitTestMode.None)
 
       // 拖拽悬停高亮遮罩：半透明遮罩（DesignTokens 色板中的既有遮罩色）+ 居中提示文案
       if (this.isDragOver) {
