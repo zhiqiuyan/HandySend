@@ -1395,6 +1395,8 @@ struct MainTabFloating {
     .barOverlap(true)
     .barPosition(BarPosition.End)
     .vertical(false)
+    // 悬浮栏保留官方系统材质，同时指定同色底色，避免深/浅色下栏下透出无关内容
+    .barBackgroundColor($r('app.color.card_background'))
     .barFloatingStyle({
       // 页签栏与窗口底边的间距：存在系统导航条时安全区已提供该间距，仅补 4vp 少量间隙（避免贴住导航条）；
       // 无系统导航条（PC 自由窗口、手机/平板小窗）时安全区不提供间距，须显式留出固定 12vp。
@@ -1432,6 +1434,8 @@ struct MainTabFloating {
    * 传统底栏形态的页签容器（默认）：HdsTabs 官方平铺样式，不设置 barFloatingStyle
    *（无圆角悬浮、系统材质与底部渐变遮罩）。保留 barOverlap(true) 以沿用现有内容的
    * tabBarClearance 底部避让，避免页签栏与内容间距叠加成双倍空白。
+   * 栏背景用 card_background 色 token 并关闭背景模糊：浅色模式纯白、深色模式深色卡片色，
+   * 内容不会从栏下透出；系统导航条区域由根容器同色块补齐，形成一体化。
    */
   @Builder
   traditionalTabs() {
@@ -1447,6 +1451,8 @@ struct MainTabFloating {
     .barOverlap(true)
     .barPosition(BarPosition.End)
     .vertical(false)
+    .barBackgroundColor($r('app.color.card_background'))
+    .barBackgroundBlurStyle(BlurStyle.NONE)
     .onChange((index: number) => {
       this.currentTabIndex = index;
       this.showTabBar();
@@ -1607,6 +1613,21 @@ struct MainTabFloating {
         this.navBarVisible = visible;
         this.updateMtaScanByVisibility();
       })
+
+      // 系统导航条区域与底部导航栏同色一体化：覆盖在所有子页面之上（含推入的
+      // 设置页等 NavDestination），避免各页背景铺到屏幕底部造成栏下色块断裂。
+      // 色值走 card_background token：浅色纯白、深色深色卡片色，随深浅模式自动切换。
+      // HitTestMode.None 不拦截触摸，系统返回手势与各页交互不受影响。
+      Stack({ alignContent: Alignment.Bottom }) {
+        Column()
+          .width('100%')
+          .height(this.naviIndicatorHeight)
+          .backgroundColor($r('app.color.card_background'))
+          .hitTestBehavior(HitTestMode.None)
+      }
+      .width('100%')
+      .height('100%')
+      .hitTestBehavior(HitTestMode.None)
 
       // 拖拽悬停高亮遮罩：半透明遮罩（DesignTokens 色板中的既有遮罩色）+ 居中提示文案
       if (this.isDragOver) {
