@@ -1478,6 +1478,7 @@ struct MainTabFloating {
   @Builder
   traditionalBottomBar() {
     Stack({ alignContent: Alignment.Bottom }) {
+      Column() {
       Row() {
         // 发送
         Column() {
@@ -1533,11 +1534,25 @@ struct MainTabFloating {
       .width('100%')
       .height(56)
       .backgroundColor($r('app.color.card_background'))
-      // 纯色铺满系统导航条区域：Expand 绘制级扩展，布局仍避让系统栏，不遮挡手势
-      .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.BOTTOM])
+      // 图标栏自身不再承担铺满手势条区域的职责，改由下方独立的填充块完成，
+      // 避免绘制级扩展到边界时高度取值不确定而盖住图标（历史教训）。
+
+      // 系统手势导航条区域的实心填充块：高度取 avoidArea 监听得到的实测导航条高度，
+      // 严格排在图标栏下方，白色一体化且不遮挡图标。HitTestMode.None 不拦截手势返回。
+        Column()
+          .width('100%')
+          .height(this.naviIndicatorHeight)
+          .backgroundColor($r('app.color.card_background'))
+          .hitTestBehavior(HitTestMode.None)
+      }
+      .width('100%')
     }
     .width('100%')
     .height('100%')
+    // 布局级忽略底部安全区（官方 API，≥API20，本工程基线 23 满足）：让本容器布局真正
+    // 延伸到物理屏幕底边，内部填充块才能落在手势条区域；纯绘制级 expandSafeArea 依赖
+    // 层级链逐级配置、且子组件只能扩展到父边界，在此结构下无法可靠铺满，故改用此方案。
+    .ignoreLayoutSafeArea([LayoutSafeAreaType.SYSTEM], [LayoutSafeAreaEdge.BOTTOM])
     // 滚动时整栏收起（与原生 applyHideAnimation 等价，用位移实现）
     .offset({ y: this.isTabHidden ? 80 : 0 })
     .animation({ duration: DesignTokens.animation.durationNormal, curve: Curve.FastOutSlowIn })
