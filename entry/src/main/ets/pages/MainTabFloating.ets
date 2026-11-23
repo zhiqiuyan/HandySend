@@ -1431,6 +1431,26 @@ struct MainTabFloating {
   }
 
   /**
+   * 系统手势导航条区域的独立纯色填充层。
+   * 关键约束（官方 expandSafeArea 定义）：不得设置 position/offset 等渲染属性，
+   * 且须与父容器非安全区边界重叠，绘制级扩展才生效。因此该层从带 offset 的底栏中
+   * 独立出来，贴根容器底部，仅用绘制级展开把 card_background 延伸到物理底边。
+   * 声明在底栏之前（z-order 更低），高度仅覆盖手势条区域，不会遮挡 56vp 图标行。
+   */
+  @Builder
+  navigationIndicatorFill() {
+    Column()
+      .width('100%')
+      .height(56)
+      .backgroundColor($r('app.color.card_background'))
+      .hitTestBehavior(HitTestMode.None)
+      // 绘制级扩展到物理底边：本层及其父链均无 offset/position，扩展链完整。
+      // 高度 56vp 覆盖图标区，背景向下延伸到手势条区域，与图标栏连成一体；
+      // 不依赖 naviIndicatorHeight 实测值（该值在部分导航模式返回 0，导致填充失效）。
+      .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.BOTTOM])
+  }
+
+  /**
    * 传统底栏形态的页签容器（默认）：HdsTabs 官方平铺样式，不设置 barFloatingStyle
    *（无圆角悬浮、系统材质与底部渐变遮罩）。保留 barOverlap(true) 以沿用现有内容的
    * tabBarClearance 底部避让，避免页签栏与内容间距叠加成双倍空白。
@@ -1534,25 +1554,15 @@ struct MainTabFloating {
       .width('100%')
       .height(56)
       .backgroundColor($r('app.color.card_background'))
-      // 图标栏自身不再承担铺满手势条区域的职责，改由下方独立的填充块完成，
-      // 避免绘制级扩展到边界时高度取值不确定而盖住图标（历史教训）。
-
-      // 系统手势导航条区域的实心填充块：高度取 avoidArea 监听得到的实测导航条高度，
-      // 严格排在图标栏下方，白色一体化且不遮挡图标。HitTestMode.None 不拦截手势返回。
-        Column()
-          .width('100%')
-          .height(this.naviIndicatorHeight)
-          .backgroundColor($r('app.color.card_background'))
-          .hitTestBehavior(HitTestMode.None)
       }
       .width('100%')
     }
     .width('100%')
     .height('100%')
-    // 布局级忽略底部安全区（官方 API，≥API20，本工程基线 23 满足）：让本容器布局真正
-    // 延伸到物理屏幕底边，内部填充块才能落在手势条区域；纯绘制级 expandSafeArea 依赖
-    // 层级链逐级配置、且子组件只能扩展到父边界，在此结构下无法可靠铺满，故改用此方案。
-    .ignoreLayoutSafeArea([LayoutSafeAreaType.SYSTEM], [LayoutSafeAreaEdge.BOTTOM])
+    // 图标栏贴应用窗口底部（安全区上沿）。手势条区域的纯色由根容器中独立的
+    // navigationIndicatorFill 承担：该层不施加 offset/position，绘制级 expandSafeArea
+    // 才能可靠延伸到物理底边（官方定义：带渲染属性的组件其绘制扩展可能不生效）。
+    // 本容器保留 offset 仅用于滚动隐藏整栏位移。
     // 滚动时整栏收起（与原生 applyHideAnimation 等价，用位移实现）
     .offset({ y: this.isTabHidden ? 80 : 0 })
     .animation({ duration: DesignTokens.animation.durationNormal, curve: Curve.FastOutSlowIn })
@@ -1704,6 +1714,24 @@ struct MainTabFloating {
         this.navBarVisible = visible;
         this.updateMtaScanByVisibility();
       })
+
+      // 系统手势条区域纯色填充：独立层、无 offset，先于底栏声明（z-order 更低）。
+      // 贴根容器底部，仅覆盖手势条高度，与 56vp 图标行拼成一体化白色，不遮挡图标。
+      if (!this.useWidescreenSideBar() && this.navBarStyle !== 'floating') {
+        Stack({ alignContent: Alignment.Bottom }) {
+          this.navigationIndicatorFill()
+        }
+        .width('100%')
+        .height('100%')
+        .hitTestBehavior(HitTestMode.None)
+        // 与底栏同步滚动隐藏：用 opacity 而非 offset，避免 offset 渲染属性破坏
+        // 下方 expandSafeArea 的绘制扩展链（opacity 不改变布局与绘制边界）。
+        .opacity(this.isTabHidden ? 0 : 1)
+        .animation({ duration: DesignTokens.animation.durationNormal, curve: Curve.FastOutSlowIn })
+        // 扩展链中间层：与根容器、填充层三级均配置 expandSafeArea(BOTTOM)，
+        // 保证绘制级扩展沿层级链逐级生效到物理底边。
+        .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.BOTTOM])
+      }
 
       // 传统底栏（默认）：用系统组件绘制于所有子页面之上（含推入的设置页等 NavDestination）。
       // HDS 原生栏默认自适应材质无法设为纯色，barBackgroundColor 在真机不生效，故原生栏高度归零，
