@@ -238,15 +238,11 @@
     },
     {
       "name": "about_description",
-      "value": "支援多協議的跨裝置檔案傳輸應用程式"
+      "value": "開源、免費的跨裝置檔案傳輸工具"
     },
     {
       "name": "about_project_url_title",
-      "value": "專案開源位址"
-    },
-    {
-      "name": "about_localsend_url_title",
-      "value": "LocalSend 開源位址"
+      "value": "專案倉庫"
     },
     {
       "name": "sponsor_label",
@@ -2451,6 +2447,66 @@
     {
       "name": "receive_folder_reserved_name",
       "value": "傳送方資料夾包含應用保留的暫存目錄名稱，已拒絕接收"
+    },
+    {
+      "name": "about_intro",
+      "value": "鴻蒙分享是一款開源、免費的跨裝置檔案傳輸工具。基於 LocalSend 協定，可在同一區域網路內的手機、平板與電腦之間快速互傳檔案，無需聯網、無需註冊帳號。"
+    },
+    {
+      "name": "open_source_label",
+      "value": "開源"
+    },
+    {
+      "name": "open_source_description",
+      "value": "專案倉庫與開源協議"
+    },
+    {
+      "name": "open_source_repo_title",
+      "value": "專案倉庫"
+    },
+    {
+      "name": "open_source_repo_url",
+      "value": "https://github.com/zhiqiuyan/HarmonyShare"
+    },
+    {
+      "name": "open_source_license_title",
+      "value": "開源協議"
+    },
+    {
+      "name": "open_source_license_value",
+      "value": "Apache License 2.0"
+    },
+    {
+      "name": "open_source_license_url",
+      "value": "https://github.com/zhiqiuyan/HarmonyShare/blob/main/LICENSE"
+    },
+    {
+      "name": "open_source_ack_title",
+      "value": "上游專案"
+    },
+    {
+      "name": "open_source_ack_value",
+      "value": "LocalSend"
+    },
+    {
+      "name": "open_source_localsend_title",
+      "value": "LocalSend 開源倉庫"
+    },
+    {
+      "name": "open_source_localsend_url",
+      "value": "https://github.com/localsend/localsend"
+    },
+    {
+      "name": "disclaimer_label",
+      "value": "免責條款"
+    },
+    {
+      "name": "disclaimer_description",
+      "value": "使用本應用程式前請閱讀"
+    },
+    {
+      "name": "disclaimer_content",
+      "value": "一、應用程式性質\n鴻蒙分享（以下簡稱「本應用程式」）是一款開源、免費的跨裝置檔案傳輸工具，按「現況」提供。開發者盡力保證應用程式穩定可用，但對應用程式的適用性、準確性或完整性不作任何明示或暗示的擔保。\n\n二、使用責任\n您應確保透過本應用程式傳輸的內容合法，並遵守所在地區的法律法規。因使用本應用程式產生的任何直接或間接損失（包括但不限於資料遺失、傳輸失敗或裝置損壞），開發者不承擔法律責任。\n\n三、傳輸安全\n本應用程式在區域網路內建立點對點連線傳輸檔案。請僅在可信任的網路環境中使用，並自行負責傳輸內容的隱私與安全。\n\n四、開源與第三方\n本應用程式遵循 Apache License 2.0 開源協議，並基於 LocalSend 等開源專案建構。第三方專案的版權與商標歸各自權利人所有。\n\n五、條款變更\n開發者保留修訂本免責條款的權利，更新後的條款將在應用程式內公佈。"
     }
   ]
 }

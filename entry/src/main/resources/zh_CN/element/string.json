@@ -238,15 +238,11 @@
     },
     {
       "name": "about_description",
-      "value": "支持多协议的跨设备文件传输应用"
+      "value": "开源、免费的跨设备文件传输工具"
     },
     {
       "name": "about_project_url_title",
-      "value": "项目开源地址"
-    },
-    {
-      "name": "about_localsend_url_title",
-      "value": "LocalSend 开源地址"
+      "value": "项目仓库"
     },
     {
       "name": "sponsor_label",
@@ -2451,6 +2447,66 @@
     {
       "name": "receive_folder_reserved_name",
       "value": "发送方文件夹包含应用保留的临时目录名，已拒绝接收"
+    },
+    {
+      "name": "about_intro",
+      "value": "鸿蒙分享是一款开源、免费的跨设备文件传输工具。基于 LocalSend 协议，可在同一局域网内的手机、平板与电脑之间快速互传文件，无需联网、无需注册账号。"
+    },
+    {
+      "name": "open_source_label",
+      "value": "开源"
+    },
+    {
+      "name": "open_source_description",
+      "value": "项目仓库与开源协议"
+    },
+    {
+      "name": "open_source_repo_title",
+      "value": "项目仓库"
+    },
+    {
+      "name": "open_source_repo_url",
+      "value": "https://github.com/zhiqiuyan/HarmonyShare"
+    },
+    {
+      "name": "open_source_license_title",
+      "value": "开源协议"
+    },
+    {
+      "name": "open_source_license_value",
+      "value": "Apache License 2.0"
+    },
+    {
+      "name": "open_source_license_url",
+      "value": "https://github.com/zhiqiuyan/HarmonyShare/blob/main/LICENSE"
+    },
+    {
+      "name": "open_source_ack_title",
+      "value": "上游项目"
+    },
+    {
+      "name": "open_source_ack_value",
+      "value": "LocalSend"
+    },
+    {
+      "name": "open_source_localsend_title",
+      "value": "LocalSend 开源仓库"
+    },
+    {
+      "name": "open_source_localsend_url",
+      "value": "https://github.com/localsend/localsend"
+    },
+    {
+      "name": "disclaimer_label",
+      "value": "免责条款"
+    },
+    {
+      "name": "disclaimer_description",
+      "value": "使用本应用前请阅读"
+    },
+    {
+      "name": "disclaimer_content",
+      "value": "一、应用性质\n鸿蒙分享（以下简称“本应用”）是一款开源、免费的跨设备文件传输工具，按“现状”提供。开发者尽力保证应用稳定可用，但不对应用的适用性、准确性或完整性作出任何明示或暗示的担保。\n\n二、使用责任\n您应确保通过本应用传输的内容合法，并遵守所在国家或地区的法律法规。因使用本应用产生的任何直接或间接损失（包括但不限于数据丢失、传输失败或设备损坏），开发者不承担法律责任。\n\n三、传输安全\n本应用在局域网内建立点对点连接传输文件。请仅在可信任的网络环境中使用，并自行负责传输内容的隐私与安全。\n\n四、开源与第三方\n本应用遵循 Apache License 2.0 开源协议，并基于 LocalSend 等开源项目构建。第三方项目的版权与商标归各自权利人所有。\n\n五、条款变更\n开发者保留修订本免责条款的权利，更新后的条款将在应用内公布。"
     }
   ]
 }

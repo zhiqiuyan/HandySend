@@ -238,15 +238,11 @@
     },
     {
       "name": "about_description",
-      "value": "A multi-protocol cross-device file transfer app"
+      "value": "An open-source, free cross-device file transfer tool"
     },
     {
       "name": "about_project_url_title",
-      "value": "Project Open Source"
-    },
-    {
-      "name": "about_localsend_url_title",
-      "value": "LocalSend Open Source"
+      "value": "Project repository"
     },
     {
       "name": "sponsor_label",
@@ -2451,6 +2447,66 @@
     {
       "name": "receive_folder_reserved_name",
       "value": "The sender folder contains a reserved temporary directory name; the transfer was rejected"
+    },
+    {
+      "name": "about_intro",
+      "value": "HarmonyShare is an open-source, free cross-device file transfer tool. Built on the LocalSend protocol, it lets your phone, tablet and computer exchange files over a local network — no internet account required."
+    },
+    {
+      "name": "open_source_label",
+      "value": "Open source"
+    },
+    {
+      "name": "open_source_description",
+      "value": "Repository and license"
+    },
+    {
+      "name": "open_source_repo_title",
+      "value": "Project repository"
+    },
+    {
+      "name": "open_source_repo_url",
+      "value": "https://github.com/zhiqiuyan/HarmonyShare"
+    },
+    {
+      "name": "open_source_license_title",
+      "value": "License"
+    },
+    {
+      "name": "open_source_license_value",
+      "value": "Apache License 2.0"
+    },
+    {
+      "name": "open_source_license_url",
+      "value": "https://github.com/zhiqiuyan/HarmonyShare/blob/main/LICENSE"
+    },
+    {
+      "name": "open_source_ack_title",
+      "value": "Upstream project"
+    },
+    {
+      "name": "open_source_ack_value",
+      "value": "LocalSend"
+    },
+    {
+      "name": "open_source_localsend_title",
+      "value": "LocalSend repository"
+    },
+    {
+      "name": "open_source_localsend_url",
+      "value": "https://github.com/localsend/localsend"
+    },
+    {
+      "name": "disclaimer_label",
+      "value": "Disclaimer"
+    },
+    {
+      "name": "disclaimer_description",
+      "value": "Please read before using this app"
+    },
+    {
+      "name": "disclaimer_content",
+      "value": "1. Nature of the App\nHarmonyShare (\"the App\") is an open-source, free cross-device file transfer tool provided \"as is\". The developer strives to keep the App stable but makes no express or implied warranties regarding its suitability, accuracy or completeness.\n\n2. Your Responsibility\nYou are responsible for ensuring that content transferred through the App is lawful and complies with the laws of your region. The developer is not liable for any direct or indirect loss (including but not limited to data loss, transfer failures or device damage) arising from the use of the App.\n\n3. Transfer Security\nThe App transfers files over peer-to-peer connections on a local network. Use it only in trusted network environments; you are responsible for the privacy and security of the content you transfer.\n\n4. Open Source and Third Parties\nThe App is licensed under the Apache License 2.0 and built upon open-source projects including LocalSend. Copyrights and trademarks of third-party projects belong to their respective owners.\n\n5. Changes to These Terms\nThe developer reserves the right to revise these terms. Updated terms will be published within the App."
     }
   ]
 }

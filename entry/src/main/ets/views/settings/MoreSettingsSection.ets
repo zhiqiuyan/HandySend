@@ -24,11 +24,16 @@ import {
 import { formatSizeDetailed } from '../../utils/FormatUtil';
 import { subscribeOverlayClose, unsubscribeOverlayClose } from '../../utils/OverlayCloseBus';
 
-// 更多设置分组（关于/反馈/评价/赞助/缓存/诊断日志/恢复默认）。
-// 关于/反馈/评价/赞助半屏弹窗直接绑定在本组件，各自独立。
+// 更多设置分组（关于/开源/免责条款/缓存/诊断日志/恢复默认）。
+// 关于/开源/免责条款半屏弹窗直接绑定在本组件，各自独立。
 
 // 反馈收件邮箱：邮箱路径统一写入收件人，避免用户手填出错
 const FEEDBACK_MAIL_ADDRESS: string = 'springtwr@qq.com';
+
+// 当前项目仓库与开源协议地址（关于/开源页共用）
+const PROJECT_REPO_URL: string = 'https://github.com/zhiqiuyan/HarmonyShare';
+const PROJECT_LICENSE_URL: string = PROJECT_REPO_URL + '/blob/main/LICENSE';
+const LOCALSEND_REPO_URL: string = 'https://github.com/localsend/localsend';
 
 @ComponentV2
 export struct MoreSettingsSection {
@@ -37,6 +42,8 @@ export struct MoreSettingsSection {
   @Require @Param viewModel: SettingsViewModel
   @Local isShowFeedbackSheet: boolean = false
   @Local isShowAboutSheet: boolean = false
+  @Local isShowOpenSourceSheet: boolean = false
+  @Local isShowDisclaimerSheet: boolean = false
   @Local isShowSponsorSheet: boolean = false
   @Local isShowRateSheet: boolean = false
   // 赞助弹窗内容：false 展示赞助方式列表，true 切换到微信赞赏码
@@ -54,6 +61,8 @@ export struct MoreSettingsSection {
   // 新传输直达详情前的弹层收起：本组件只处理自己打开的四个半模态与弹窗
   private overlayCloseCallback: () => void = (): void => {
     this.isShowAboutSheet = false;
+    this.isShowOpenSourceSheet = false;
+    this.isShowDisclaimerSheet = false;
     this.isShowRateSheet = false;
     this.isShowFeedbackSheet = false;
     this.isShowSponsorSheet = false;
@@ -135,7 +144,7 @@ export struct MoreSettingsSection {
         .alignItems(VerticalAlign.Center)
         .onClick(() => {
           let context = this.getUIContext().getHostContext() as common.UIAbilityContext;
-          context.openLink('https://gitcode.com/springtwr/HandySend/issues').catch((_e: Object) => {
+          context.openLink('https://github.com/zhiqiuyan/HarmonyShare/issues').catch((_e: Object) => {
             // 浏览器可能不可用
           });
         })
@@ -626,6 +635,24 @@ export struct MoreSettingsSection {
   @Builder
   aboutSheetBuilder(): void {
     Column() {
+      // 应用简介
+      Column() {
+        Text($r('app.string.about_intro'))
+          .fontSize(DesignTokens.font.bodyM)
+          .fontColor($r('app.color.text_secondary'))
+          .lineHeight(DesignTokens.font.subtitleL)
+          .width('100%')
+      }
+      .width('100%')
+      .padding({
+        left: DesignTokens.space.lg,
+        right: DesignTokens.space.lg,
+        top: DesignTokens.space.md,
+        bottom: DesignTokens.space.md
+      })
+      .borderRadius(DesignTokens.radius.lg)
+      .backgroundColor($r('app.color.card_background'))
+
       // 版本信息卡片
       Column() {
         Row() {
@@ -674,74 +701,36 @@ export struct MoreSettingsSection {
       .borderRadius(DesignTokens.radius.lg)
       .backgroundColor($r('app.color.card_background'))
 
-      // 仓库地址卡片
+      // 项目仓库卡片（当前仓库，点击打开，长按复制）
       Column() {
-        Column() {
-          Text($r('app.string.about_project_url_title'))
-            .fontSize(DesignTokens.font.bodyM)
-            .fontColor($r('app.color.text_tertiary'))
-            .margin({ bottom: DesignTokens.space.tiny })
+        Text($r('app.string.about_project_url_title'))
+          .fontSize(DesignTokens.font.bodyM)
+          .fontColor($r('app.color.text_tertiary'))
+          .margin({ bottom: DesignTokens.space.tiny })
 
-          Text('https://gitcode.com/springtwr/HandySend')
-            .fontSize(DesignTokens.font.bodyM)
-            .fontColor($r('app.color.ip_blue_text'))
-            .fontWeight(FontWeight.Medium)
-            .padding({ top: DesignTokens.space.sm, bottom: DesignTokens.space.sm })
-            .textAlign(TextAlign.Center)
-            .width('100%')
-            .backgroundColor($r('app.color.accent_blue_bg'))
-            .borderRadius(DesignTokens.radius.md)
-            .onClick(() => {
-              let context = this.getUIContext().getHostContext() as common.UIAbilityContext;
-              context.openLink('https://gitcode.com/springtwr/HandySend').catch((_e: Object) => {
-              });
+        Text(PROJECT_REPO_URL)
+          .fontSize(DesignTokens.font.bodyM)
+          .fontColor($r('app.color.ip_blue_text'))
+          .fontWeight(FontWeight.Medium)
+          .padding({ top: DesignTokens.space.sm, bottom: DesignTokens.space.sm })
+          .textAlign(TextAlign.Center)
+          .width('100%')
+          .backgroundColor($r('app.color.accent_blue_bg'))
+          .borderRadius(DesignTokens.radius.md)
+          .onClick(() => {
+            let context = this.getUIContext().getHostContext() as common.UIAbilityContext;
+            context.openLink(PROJECT_REPO_URL).catch((_e: Object) => {
+            });
+          })
+          .gesture(
+            LongPressGesture().onAction(() => {
+              if (copyText(PROJECT_REPO_URL)) {
+                this.getUIContext()
+                  .getPromptAction()
+                  .showToast({ message: $r('app.string.copy_success'), duration: 1500 });
+              }
             })
-            .gesture(
-              LongPressGesture().onAction(() => {
-                if (copyText('https://gitcode.com/springtwr/HandySend')) {
-                  this.getUIContext()
-                    .getPromptAction()
-                    .showToast({ message: $r('app.string.copy_success'), duration: 1500 });
-                }
-              })
-            )
-        }
-        .width('100%')
-
-        Divider().color($r('app.color.border_light'))
-          .margin({ top: DesignTokens.space.md, bottom: DesignTokens.space.md })
-
-        Column() {
-          Text($r('app.string.about_localsend_url_title'))
-            .fontSize(DesignTokens.font.bodyM)
-            .fontColor($r('app.color.text_tertiary'))
-            .margin({ bottom: DesignTokens.space.tiny })
-
-          Text('https://github.com/localsend/localsend')
-            .fontSize(DesignTokens.font.bodyM)
-            .fontColor($r('app.color.ip_blue_text'))
-            .fontWeight(FontWeight.Medium)
-            .padding({ top: DesignTokens.space.sm, bottom: DesignTokens.space.sm })
-            .textAlign(TextAlign.Center)
-            .width('100%')
-            .backgroundColor($r('app.color.accent_blue_bg'))
-            .borderRadius(DesignTokens.radius.md)
-            .onClick(() => {
-              let context = this.getUIContext().getHostContext() as common.UIAbilityContext;
-              context.openLink('https://github.com/localsend/localsend').catch((_e: Object) => {
-              });
-            })
-            .gesture(
-              LongPressGesture().onAction(() => {
-                if (copyText('https://github.com/localsend/localsend')) {
-                  this.getUIContext()
-                    .getPromptAction()
-                    .showToast({ message: $r('app.string.copy_success'), duration: 1500 });
-                }
-              })
-            )
-        }
-        .width('100%')
+          )
       }
       .width('100%')
       .padding({
@@ -755,6 +744,141 @@ export struct MoreSettingsSection {
       .margin({ top: DesignTokens.space.lg, bottom: DesignTokens.space.xl })
     }
     .padding({ left: DesignTokens.space.md, right: DesignTokens.space.md, bottom: DesignTokens.space.lg })
+  }
+
+  /** 开源信息弹窗：项目仓库 / 开源协议 / 上游致谢，均可点击打开。 */
+  @Builder
+  openSourceSheetBuilder(): void {
+    Column() {
+      Column() {
+        Column() {
+          Text($r('app.string.open_source_repo_title'))
+            .fontSize(DesignTokens.font.bodyM)
+            .fontColor($r('app.color.text_tertiary'))
+            .margin({ bottom: DesignTokens.space.tiny })
+          Text(PROJECT_REPO_URL)
+            .fontSize(DesignTokens.font.bodyM)
+            .fontColor($r('app.color.ip_blue_text'))
+            .fontWeight(FontWeight.Medium)
+            .padding({ top: DesignTokens.space.sm, bottom: DesignTokens.space.sm })
+            .textAlign(TextAlign.Center)
+            .width('100%')
+            .backgroundColor($r('app.color.accent_blue_bg'))
+            .borderRadius(DesignTokens.radius.md)
+            .onClick(() => {
+              let context = this.getUIContext().getHostContext() as common.UIAbilityContext;
+              context.openLink(PROJECT_REPO_URL).catch((_e: Object) => {
+              });
+            })
+            .gesture(
+              LongPressGesture().onAction(() => {
+                if (copyText(PROJECT_REPO_URL)) {
+                  this.getUIContext()
+                    .getPromptAction()
+                    .showToast({ message: $r('app.string.copy_success'), duration: 1500 });
+                }
+              })
+            )
+        }
+        .width('100%')
+
+        Divider().color($r('app.color.border_light'))
+          .margin({ top: DesignTokens.space.md, bottom: DesignTokens.space.md })
+
+        Row() {
+          Column() {
+            Text($r('app.string.open_source_license_title'))
+              .fontSize(DesignTokens.font.bodyM)
+              .fontColor($r('app.color.text_primary'))
+            Text($r('app.string.open_source_license_value'))
+              .fontSize(DesignTokens.font.bodyS)
+              .fontColor($r('app.color.text_tertiary'))
+              .margin({ top: DesignTokens.space.tiny })
+          }
+          .layoutWeight(1)
+          .alignItems(HorizontalAlign.Start)
+
+          SymbolGlyph($r('sys.symbol.chevron_forward'))
+            .fontSize(DesignTokens.font.subtitleL)
+            .fontColor([$r('app.color.text_secondary')])
+        }
+        .width('100%')
+        .alignItems(VerticalAlign.Center)
+        .onClick(() => {
+          let context = this.getUIContext().getHostContext() as common.UIAbilityContext;
+          context.openLink(PROJECT_LICENSE_URL).catch((_e: Object) => {
+          });
+        })
+
+        Divider().color($r('app.color.border_light'))
+          .margin({ top: DesignTokens.space.md, bottom: DesignTokens.space.md })
+
+        Row() {
+          Column() {
+            Text($r('app.string.open_source_ack_title'))
+              .fontSize(DesignTokens.font.bodyM)
+              .fontColor($r('app.color.text_primary'))
+            Text($r('app.string.open_source_ack_value'))
+              .fontSize(DesignTokens.font.bodyS)
+              .fontColor($r('app.color.text_tertiary'))
+              .margin({ top: DesignTokens.space.tiny })
+          }
+          .layoutWeight(1)
+          .alignItems(HorizontalAlign.Start)
+
+          SymbolGlyph($r('sys.symbol.chevron_forward'))
+            .fontSize(DesignTokens.font.subtitleL)
+            .fontColor([$r('app.color.text_secondary')])
+        }
+        .width('100%')
+        .alignItems(VerticalAlign.Center)
+        .onClick(() => {
+          let context = this.getUIContext().getHostContext() as common.UIAbilityContext;
+          context.openLink(LOCALSEND_REPO_URL).catch((_e: Object) => {
+          });
+        })
+      }
+      .width('100%')
+      .padding({
+        left: DesignTokens.space.lg,
+        right: DesignTokens.space.lg,
+        top: DesignTokens.space.md,
+        bottom: DesignTokens.space.md
+      })
+      .borderRadius(DesignTokens.radius.lg)
+      .backgroundColor($r('app.color.card_background'))
+      .margin({ bottom: DesignTokens.space.xl })
+    }
+    .width('100%')
+    .padding({ left: DesignTokens.space.md, right: DesignTokens.space.md, bottom: DesignTokens.space.lg })
+  }
+
+  /** 免责条款弹窗：完整条款放入滚动卡片，窄屏可上下阅读。 */
+  @Builder
+  disclaimerSheetBuilder(): void {
+    Scroll() {
+      Column() {
+        Text($r('app.string.disclaimer_content'))
+          .fontSize(DesignTokens.font.bodyM)
+          .fontColor($r('app.color.text_primary'))
+          .lineHeight(DesignTokens.font.subtitleL)
+          .width('100%')
+          .textAlign(TextAlign.Start)
+      }
+      .width('100%')
+      .padding({
+        left: DesignTokens.space.lg,
+        right: DesignTokens.space.lg,
+        top: DesignTokens.space.md,
+        bottom: DesignTokens.space.lg
+      })
+      .borderRadius(DesignTokens.radius.lg)
+      .backgroundColor($r('app.color.card_background'))
+      .margin({ bottom: DesignTokens.space.lg })
+    }
+    .width('100%')
+    .scrollBar(BarState.Off)
+    .edgeEffect(EdgeEffect.Spring)
   }
 
   build() {
@@ -789,6 +913,68 @@ export struct MoreSettingsSection {
           title: {
             title: $r('app.string.about_card_label'),
             subtitle: $r('app.string.about_description')
+          },
+          showClose: true
+        })
+
+        // 开源（半屏弹窗：仓库、协议、致谢）
+        Row() {
+          Text($r('app.string.open_source_label'))
+            .fontSize(DesignTokens.font.bodyM)
+            .fontColor($r('app.color.text_primary'))
+            .layoutWeight(1)
+
+          SymbolGlyph($r('sys.symbol.chevron_forward'))
+            .fontSize(DesignTokens.font.subtitleL)
+            .fontColor([$r('app.color.text_secondary')])
+        }
+        .width('100%')
+        .padding({ top: DesignTokens.space.tiny, bottom: DesignTokens.space.tiny })
+        .constraintSize({ minHeight: DesignTokens.size.thumbSm })
+        .alignItems(VerticalAlign.Center)
+        .onClick(() => {
+          this.isShowOpenSourceSheet = true;
+        })
+        .id('settings_open_source_entry')
+        .bindSheet($$this.isShowOpenSourceSheet, this.openSourceSheetBuilder(), {
+          height: SheetSize.FIT_CONTENT,
+          width: getSheetWidth(this.breakpointInfo.widthBreakpoint),
+          preferType: isWideWidth(this.breakpointInfo.widthBreakpoint) ? SheetType.CENTER : SheetType.BOTTOM,
+          blurStyle: BlurStyle.Regular,
+          title: {
+            title: $r('app.string.open_source_label'),
+            subtitle: $r('app.string.open_source_description')
+          },
+          showClose: true
+        })
+
+        // 免责条款（半屏弹窗：可滚动阅读）
+        Row() {
+          Text($r('app.string.disclaimer_label'))
+            .fontSize(DesignTokens.font.bodyM)
+            .fontColor($r('app.color.text_primary'))
+            .layoutWeight(1)
+
+          SymbolGlyph($r('sys.symbol.chevron_forward'))
+            .fontSize(DesignTokens.font.subtitleL)
+            .fontColor([$r('app.color.text_secondary')])
+        }
+        .width('100%')
+        .padding({ top: DesignTokens.space.tiny, bottom: DesignTokens.space.tiny })
+        .constraintSize({ minHeight: DesignTokens.size.thumbSm })
+        .alignItems(VerticalAlign.Center)
+        .onClick(() => {
+          this.isShowDisclaimerSheet = true;
+        })
+        .id('settings_disclaimer_entry')
+        .bindSheet($$this.isShowDisclaimerSheet, this.disclaimerSheetBuilder(), {
+          height: SheetSize.MEDIUM,
+          width: getSheetWidth(this.breakpointInfo.widthBreakpoint),
+          preferType: isWideWidth(this.breakpointInfo.widthBreakpoint) ? SheetType.CENTER : SheetType.BOTTOM,
+          blurStyle: BlurStyle.Regular,
+          title: {
+            title: $r('app.string.disclaimer_label'),
+            subtitle: $r('app.string.disclaimer_description')
           },
           showClose: true
         })
