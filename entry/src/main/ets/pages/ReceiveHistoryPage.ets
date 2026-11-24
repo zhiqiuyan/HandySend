@@ -819,7 +819,6 @@ export struct ReceiveHistoryPage {
                     .padding(DesignTokens.space.md)
                     .backgroundColor($r('app.color.card_background'))
                     .borderRadius(DesignTokens.radius.lg)
-                    .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.border_light') })
                     .margin({ bottom: DesignTokens.space.tiny })
                     .id('receive_history_item')
                     // 点击：多选模式下切换勾选；否则查看文本类记录内容

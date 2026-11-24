@@ -197,7 +197,6 @@ export struct TroubleshootPage {
                 })
                 .backgroundColor($r('app.color.card_background'))
                 .borderRadius(DesignTokens.radius.lg)
-                .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.border_light') })
               }
               .width('100%')
             }, (item: FaqItem, index: number) => `${index}`)

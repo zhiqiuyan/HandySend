@@ -143,7 +143,6 @@ export struct MoreSettingsSection {
       .width('100%')
       .backgroundColor($r('app.color.card_background'))
       .borderRadius(DesignTokens.radius.lg)
-      .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.border_light') })
     }
     .width('100%')
     .padding({ left: DesignTokens.space.md, right: DesignTokens.space.md, bottom: DesignTokens.space.lg })
@@ -193,7 +192,6 @@ export struct MoreSettingsSection {
         .width('100%')
         .backgroundColor($r('app.color.card_background'))
         .borderRadius(DesignTokens.radius.lg)
-        .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.border_light') })
         .padding({
           left: DesignTokens.space.lg,
           right: DesignTokens.space.lg,
@@ -256,7 +254,6 @@ export struct MoreSettingsSection {
         .padding(DesignTokens.space.md)
         .backgroundColor($r('app.color.card_background'))
         .borderRadius(DesignTokens.radius.lg)
-        .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.border_light') })
 
         Text($r('app.string.sponsor_wechat_hint'))
           .fontSize(DesignTokens.font.bodyM)
@@ -426,7 +423,6 @@ export struct MoreSettingsSection {
       .width('100%')
       .backgroundColor($r('app.color.card_background'))
       .borderRadius(DesignTokens.radius.lg)
-      .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.border_light') })
       .padding({
         left: DesignTokens.space.lg,
         right: DesignTokens.space.lg,
@@ -677,7 +673,6 @@ export struct MoreSettingsSection {
       .width('100%')
       .borderRadius(DesignTokens.radius.lg)
       .backgroundColor($r('app.color.card_background'))
-      .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.border_light') })
 
       // 仓库地址卡片
       Column() {
@@ -757,7 +752,6 @@ export struct MoreSettingsSection {
       })
       .borderRadius(DesignTokens.radius.lg)
       .backgroundColor($r('app.color.card_background'))
-      .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.border_light') })
       .margin({ top: DesignTokens.space.lg, bottom: DesignTokens.space.xl })
     }
     .padding({ left: DesignTokens.space.md, right: DesignTokens.space.md, bottom: DesignTokens.space.lg })
@@ -797,123 +791,6 @@ export struct MoreSettingsSection {
             subtitle: $r('app.string.about_description')
           },
           showClose: true
-        })
-
-        // 评价
-        Column() {
-          Row() {
-            Text($r('app.string.rate_label'))
-              .fontSize(DesignTokens.font.bodyM)
-              .fontColor($r('app.color.text_primary'))
-              .layoutWeight(1)
-
-            SymbolGlyph($r('sys.symbol.chevron_forward'))
-              .fontSize(DesignTokens.font.subtitleL)
-              .fontColor([$r('app.color.text_secondary')])
-          }
-          .width('100%')
-          .padding({ top: DesignTokens.space.sm, bottom: DesignTokens.space.tiny })
-          .constraintSize({ minHeight: DesignTokens.size.thumbSm })
-          .alignItems(VerticalAlign.Center)
-
-          Text($r('app.string.rate_hint'))
-            .fontSize(DesignTokens.font.bodyS)
-            .fontColor($r('app.color.text_secondary'))
-            .alignSelf(ItemAlign.Start)
-            .margin({ bottom: DesignTokens.space.tiny })
-        }
-        .width('100%')
-        .onClick(() => {
-          this.isShowRateSheet = true;
-        })
-        .id('settings_rate_entry')
-        .bindSheet($$this.isShowRateSheet, this.rateSheetBuilder(), {
-          height: SheetSize.MEDIUM,
-          width: getSheetWidth(this.breakpointInfo.widthBreakpoint),
-          preferType: isWideWidth(this.breakpointInfo.widthBreakpoint) ? SheetType.CENTER : SheetType.BOTTOM,
-          blurStyle: BlurStyle.Regular,
-          title: {
-            title: $r('app.string.rate_label'),
-            subtitle: $r('app.string.rate_description')
-          },
-          showClose: true
-        })
-
-        // 反馈
-        Row() {
-          Text($r('app.string.feedback_title'))
-            .fontSize(DesignTokens.font.bodyM)
-            .fontColor($r('app.color.text_primary'))
-            .layoutWeight(1)
-
-          SymbolGlyph($r('sys.symbol.chevron_forward'))
-            .fontSize(DesignTokens.font.subtitleL)
-            .fontColor([$r('app.color.text_secondary')])
-        }
-        .width('100%')
-        .padding({ top: DesignTokens.space.tiny, bottom: DesignTokens.space.tiny })
-        .constraintSize({ minHeight: DesignTokens.size.thumbSm })
-        .alignItems(VerticalAlign.Center)
-        .onClick(() => {
-          this.isShowFeedbackSheet = true;
-        })
-        .id('settings_feedback_entry')
-        .bindSheet($$this.isShowFeedbackSheet, this.feedbackSheetBuilder(), {
-          height: SheetSize.MEDIUM,
-          width: getSheetWidth(this.breakpointInfo.widthBreakpoint),
-          // 宽屏（lg/xl）以居中弹窗呈现，窄屏保持底部弹窗（与手机行为一致）
-          preferType: isWideWidth(this.breakpointInfo.widthBreakpoint) ? SheetType.CENTER : SheetType.BOTTOM,
-          blurStyle: BlurStyle.Regular,
-          title: {
-            title: $r('app.string.feedback_title'),
-            subtitle: $r('app.string.feedback_desc')
-          },
-          showClose: true
-        })
-
-        // 赞助
-        Row() {
-          Text($r('app.string.sponsor_label'))
-            .fontSize(DesignTokens.font.bodyM)
-            .fontColor($r('app.color.text_primary'))
-            .layoutWeight(1)
-
-          SymbolGlyph($r('sys.symbol.chevron_forward'))
-            .fontSize(DesignTokens.font.subtitleL)
-            .fontColor([$r('app.color.text_secondary')])
-        }
-        .width('100%')
-        .padding({ top: DesignTokens.space.tiny, bottom: DesignTokens.space.tiny })
-        .constraintSize({ minHeight: DesignTokens.size.thumbSm })
-        .alignItems(VerticalAlign.Center)
-        .onClick(() => {
-          // 每次打开都从赞助方式列表开始
-          this.sponsorShowWechat = false;
-          this.isShowSponsorSheet = true;
-        })
-        .id('settings_sponsor_entry')
-        .bindSheet($$this.isShowSponsorSheet, this.sponsorSheetBuilder(), {
-          // 两种赞助方式视图共用同一弹窗高度，切换时高度保持不变
-          height: SheetSize.MEDIUM,
-          width: getSheetWidth(this.breakpointInfo.widthBreakpoint),
-          preferType: isWideWidth(this.breakpointInfo.widthBreakpoint) ? SheetType.CENTER : SheetType.BOTTOM,
-          blurStyle: BlurStyle.Regular,
-          title: {
-            title: $r('app.string.sponsor_label'),
-            subtitle: $r('app.string.sponsor_description')
-          },
-          showClose: true,
-          onWillDismiss: (dismissSheetAction: DismissSheetAction) => {
-            // 微信赞赏页时系统返回先退回赞助方式列表，不关闭半模态
-            if (dismissSheetAction.reason === DismissReason.PRESS_BACK && this.sponsorShowWechat) {
-              this.switchSponsorPage(false);
-              return;
-            }
-            dismissSheetAction.dismiss();
-          },
-          onWillSpringBackWhenDismiss: (_springBackAction: SpringBackAction) => {
-            // 不调用 springBack：取消下拉回弹，使下拉直接进入关闭流程
-          }
         })
 
         // 缓存（右侧展示当前缓存大小；只清理临时文件）
@@ -997,7 +874,6 @@ export struct MoreSettingsSection {
       })
       .borderRadius(DesignTokens.radius.lg)
       .backgroundColor($r('app.color.card_background'))
-      .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.border_light') })
       .margin({ top: DesignTokens.space.sm })
     }
     .width('100%')

@@ -121,7 +121,6 @@ export struct ShareLinkPage {
     .padding(DesignTokens.space.md)
     .backgroundColor($r('app.color.warning_bg'))
     .borderRadius(DesignTokens.radius.lg)
-    .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.warning_orange') })
   }
 
   /** 本次挂载的上传免确认开关。 */

@@ -45,7 +45,6 @@ import {
   stopLocalServer,
   restoreWebService,
   isHideTabBarOnScroll,
-  getNavBarStyle,
   startMtaDiscoveryScan,
   stopMtaDiscoveryScan,
   saveMediaToGallery,
@@ -66,7 +65,6 @@ import {
   isSaveToGallery, getLocalSendEnabled, getMtaEnabled,
   getWebSendAllowed, getNotifiedProtocolSignature, setNotifiedProtocolSignature
 } from '../service/repository/SettingsRepository';
-import { DEFAULT_NAV_BAR_STYLE } from '../model/SettingsDefaults';
 import {
   querySessions, getSession, getPendingSessionIds, hasSessionOrHistory, subscribeSessions,
   unsubscribeSessions
@@ -114,9 +112,6 @@ struct MainTabFloating {
   // 底部系统导航条避让高度（vp）：>0 表示存在系统导航条。窗口在全屏/小窗/分屏间切换、
   // 旋转或折叠时该值会变化，故监听 avoidAreaChange 动态更新；底部浮动页签栏间距据此条件化
   @Local private naviIndicatorHeight: number = 0;
-  // 导航栏样式：'traditional'（默认，HdsTabs 官方平铺底栏）/ 'floating'（悬浮栏）。
-  // 设置变更后经变更总线同步本字段，触发页签容器即时重建
-  @Local private navBarStyle: string = DEFAULT_NAV_BAR_STYLE;
   private avoidAreaWindow: window.Window | null = null;
   private avoidAreaChangeCallback: (options: window.AvoidAreaOptions) => void =
     (options: window.AvoidAreaOptions): void => {
@@ -178,12 +173,6 @@ struct MainTabFloating {
   // 设置变化回调：协议开关实际变化时复位提示关闭状态，使提示内容随开关更新
   //（部分关闭提示的已展示签名持久化，同一状态只在下次启动提示一次）。
   private settingsChangedCallback: () => void = (): void => {
-    // 导航栏样式即时切换：@Local 赋值触发页签容器重建；重建后新栏默认显示，同步隐藏标志
-    let nextNavBarStyle: string = getNavBarStyle();
-    if (nextNavBarStyle !== this.navBarStyle) {
-      this.navBarStyle = nextNavBarStyle;
-      this.isTabHidden = false;
-    }
     let signature: string =
       `${getLocalSendEnabled()}|${getMtaEnabled()}|${getWebSendAllowed()}`;
     if (signature !== this.protocolToggleSignature) {
@@ -210,9 +199,6 @@ struct MainTabFloating {
     let context = this.getUIContext().getHostContext() as common.UIAbilityContext;
     // 偏好读取保留在首帧路径：首帧布局形态与设置值依赖它
     initAllPreferences(context);
-    // 字段初始化早于偏好初始化，此处回读一次持久化样式，保证悬浮栏设置冷启动首帧即生效
-    this.navBarStyle = getNavBarStyle();
-
     // 相册保存自动提示回调：订阅本身延后到首帧之后，但回调字段须在订阅前完成赋值
     this.galleryPromptCallback = (): void => {
       this.detectAutoGalleryPrompt();
@@ -1431,146 +1417,6 @@ struct MainTabFloating {
   }
 
   /**
-   * 系统手势导航条区域的独立纯色填充层。
-   * 关键约束（官方 expandSafeArea 定义）：不得设置 position/offset 等渲染属性，
-   * 且须与父容器非安全区边界重叠，绘制级扩展才生效。因此该层从带 offset 的底栏中
-   * 独立出来，贴根容器底部，仅用绘制级展开把 card_background 延伸到物理底边。
-   * 声明在底栏之前（z-order 更低），高度仅覆盖手势条区域，不会遮挡 56vp 图标行。
-   */
-  @Builder
-  navigationIndicatorFill() {
-    Column()
-      .width('100%')
-      .height(56)
-      .backgroundColor($r('app.color.card_background'))
-      .hitTestBehavior(HitTestMode.None)
-      // 绘制级扩展到物理底边：本层及其父链均无 offset/position，扩展链完整。
-      // 高度 56vp 覆盖图标区，背景向下延伸到手势条区域，与图标栏连成一体；
-      // 不依赖 naviIndicatorHeight 实测值（该值在部分导航模式返回 0，导致填充失效）。
-      .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.BOTTOM])
-  }
-
-  /**
-   * 传统底栏形态的页签容器（默认）：HdsTabs 官方平铺样式，不设置 barFloatingStyle
-   *（无圆角悬浮、系统材质与底部渐变遮罩）。保留 barOverlap(true) 以沿用现有内容的
-   * tabBarClearance 底部避让，避免页签栏与内容间距叠加成双倍空白。
-   * 原生页签栏隐藏（barHeight 0），底栏由根容器的 traditionalBottomBar 绘制：
-   * 纯色不透明、图标文字完整、下端与系统导航条区域一体化。
-   */
-  @Builder
-  traditionalTabs() {
-    HdsTabs({ controller: this.hdsController, index: this.currentTabIndex }) {
-      this.sendTab()
-      this.transferTab()
-      this.settingsTab()
-    }
-    .animationDuration(DesignTokens.animation.durationNormal)
-    .clip(false)
-    .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.TOP, SafeAreaEdge.BOTTOM])
-    // 原生栏不渲染（高度 0）：其默认自适应材质无法设为纯色，也不受 barBackgroundColor 控制；
-    // 底栏改由根容器的 traditionalBottomBar 用系统组件绘制，保留本容器的切换与滚动位置链路
-    .barHeight(0)
-    .barOverlap(true)
-    .barPosition(BarPosition.End)
-    .vertical(false)
-    .scrollable(false)
-    .onChange((index: number) => {
-      this.currentTabIndex = index;
-      this.showTabBar();
-      this.updateMtaScanByVisibility();
-      this.refreshLocalInterfacesIfHomeVisible();
-    })
-    .onAnimationStart((index: number, targetIndex: number) => {
-      this.currentTabIndex = targetIndex;
-      if (index !== targetIndex) {
-        this.restoreTabScroll(targetIndex);
-      }
-    })
-    .width('100%')
-    .height('100%')
-  }
-
-  /**
-   * 传统底栏（系统组件实现）：HDS 原生栏为自适应材质，指定纯色背景在真机不生效；
-   * 此处用 ArkUI 基础组件按原生栏同款资源与配色绘制纯色不透明底栏，
-   * 覆盖所有子页面（含 NavDestination），下端与系统导航条区域同色一体化。
-   */
-  @Builder
-  traditionalBottomBar() {
-    Stack({ alignContent: Alignment.Bottom }) {
-      Column() {
-      Row() {
-        // 发送
-        Column() {
-          Image($r('app.media.ic_tab_send'))
-            .width(DesignTokens.size.iconSm)
-            .height(DesignTokens.size.iconSm)
-            .fillColor(this.currentTabIndex === 0 ? $r('app.color.accent_blue') : $r('app.color.text_secondary'))
-          Text($r('app.string.tab_send'))
-            .fontSize(DesignTokens.font.bodyS)
-            .fontColor(this.currentTabIndex === 0 ? $r('app.color.accent_blue') : $r('app.color.text_secondary'))
-            .margin({ top: DesignTokens.space.tiny })
-        }
-        .layoutWeight(1)
-        .height('100%')
-        .justifyContent(FlexAlign.Center)
-        .onClick(() => this.switchToTab(0))
-        .id('tab_bar_send')
-
-        // 任务（标签随任务数量动态变化，与原生栏同款）
-        Column() {
-          Image($r('app.media.ic_tab_transfer'))
-            .width(DesignTokens.size.iconSm)
-            .height(DesignTokens.size.iconSm)
-            .fillColor(this.currentTabIndex === 1 ? $r('app.color.accent_blue') : $r('app.color.text_secondary'))
-          Text(this.transferTabLabel())
-            .fontSize(DesignTokens.font.bodyS)
-            .fontColor(this.currentTabIndex === 1 ? $r('app.color.accent_blue') : $r('app.color.text_secondary'))
-            .margin({ top: DesignTokens.space.tiny })
-        }
-        .layoutWeight(1)
-        .height('100%')
-        .justifyContent(FlexAlign.Center)
-        .onClick(() => this.switchToTab(1))
-        .id('tab_bar_transfer')
-
-        // 设置
-        Column() {
-          Image($r('app.media.ic_tab_settings'))
-            .width(DesignTokens.size.iconSm)
-            .height(DesignTokens.size.iconSm)
-            .fillColor(this.currentTabIndex === 2 ? $r('app.color.accent_blue') : $r('app.color.text_secondary'))
-          Text($r('app.string.tab_settings'))
-            .fontSize(DesignTokens.font.bodyS)
-            .fontColor(this.currentTabIndex === 2 ? $r('app.color.accent_blue') : $r('app.color.text_secondary'))
-            .margin({ top: DesignTokens.space.tiny })
-        }
-        .layoutWeight(1)
-        .height('100%')
-        .justifyContent(FlexAlign.Center)
-        .onClick(() => this.switchToTab(2))
-        .id('tab_bar_settings')
-      }
-      .width('100%')
-      .height(56)
-      .backgroundColor($r('app.color.card_background'))
-      }
-      .width('100%')
-    }
-    .width('100%')
-    .height('100%')
-    // 图标栏贴应用窗口底部（安全区上沿）。手势条区域的纯色由根容器中独立的
-    // navigationIndicatorFill 承担：该层不施加 offset/position，绘制级 expandSafeArea
-    // 才能可靠延伸到物理底边（官方定义：带渲染属性的组件其绘制扩展可能不生效）。
-    // 本容器保留 offset 仅用于滚动隐藏整栏位移。
-    // 滚动时整栏收起（与原生 applyHideAnimation 等价，用位移实现）
-    .offset({ y: this.isTabHidden ? 80 : 0 })
-    .animation({ duration: DesignTokens.animation.durationNormal, curve: Curve.FastOutSlowIn })
-    // 空白区域不拦截触摸，避免遮挡下方页面交互
-    .hitTestBehavior(HitTestMode.None)
-  }
-
-  /**
    * 宽屏形态的页签容器：导航已由常驻宽侧边栏承担，故隐藏页签栏
    * （页签栏高度归零且禁用滑动切换），仅保留 TabContent 的切换回调与滚动位置保持链路。
    */
@@ -1614,7 +1460,7 @@ struct MainTabFloating {
   @Builder
   navigationContent() {
     // 页签容器形态：宽屏（lg/xl 且非平板竖屏、套件能力可用）→ 常驻宽侧边栏 + 隐藏页签栏的内容区；
-    // 其余情况（手机、平板竖屏 600~840vp 及以上）→ 底部水平栏，样式按用户偏好：传统平铺（默认）/ 悬浮
+    // 其余情况（手机、平板竖屏 600~840vp 及以上）→ 底部悬浮栏
     // 窗口高度不参与形态判断：矮窗下侧边栏同样可用，且比底部页签栏更省竖向空间
     if (this.useWidescreenSideBar()) {
       Row() {
@@ -1646,14 +1492,10 @@ struct MainTabFloating {
       // 安全区扩展逐层设置：侧边栏底色与内容区背景均需铺满系统栏区域
       .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.TOP, SafeAreaEdge.BOTTOM])
     } else {
-      // 窄屏按用户偏好选择底栏样式：传统平铺栏（默认）或悬浮栏
+      // 窄屏统一使用悬浮栏（传统平铺栏已取消）
       Stack({ alignContent: Alignment.Bottom }) {
         Column() {
-          if (this.navBarStyle === 'floating') {
-            this.floatingTabs()
-          } else {
-            this.traditionalTabs()
-          }
+          this.floatingTabs()
         }
         .width('100%')
         .height('100%')
@@ -1714,32 +1556,6 @@ struct MainTabFloating {
         this.navBarVisible = visible;
         this.updateMtaScanByVisibility();
       })
-
-      // 系统手势条区域纯色填充：独立层、无 offset，先于底栏声明（z-order 更低）。
-      // 贴根容器底部，仅覆盖手势条高度，与 56vp 图标行拼成一体化白色，不遮挡图标。
-      if (!this.useWidescreenSideBar() && this.navBarStyle !== 'floating') {
-        Stack({ alignContent: Alignment.Bottom }) {
-          this.navigationIndicatorFill()
-        }
-        .width('100%')
-        .height('100%')
-        .hitTestBehavior(HitTestMode.None)
-        // 与底栏同步滚动隐藏：用 opacity 而非 offset，避免 offset 渲染属性破坏
-        // 下方 expandSafeArea 的绘制扩展链（opacity 不改变布局与绘制边界）。
-        .opacity(this.isTabHidden ? 0 : 1)
-        .animation({ duration: DesignTokens.animation.durationNormal, curve: Curve.FastOutSlowIn })
-        // 扩展链中间层：与根容器、填充层三级均配置 expandSafeArea(BOTTOM)，
-        // 保证绘制级扩展沿层级链逐级生效到物理底边。
-        .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.BOTTOM])
-      }
-
-      // 传统底栏（默认）：用系统组件绘制于所有子页面之上（含推入的设置页等 NavDestination）。
-      // HDS 原生栏默认自适应材质无法设为纯色，barBackgroundColor 在真机不生效，故原生栏高度归零，
-      // 此处用 Row + Image + Text 等价实现：纯色 card_background 不透明、浅色纯白/深色深色卡片色；
-      // 图标文字按选中态着色，点击走与原生栏一致的 switchToTab，系统导航条区域同色一体化。
-      if (!this.useWidescreenSideBar() && this.navBarStyle !== 'floating') {
-        this.traditionalBottomBar()
-      }
 
       // 拖拽悬停高亮遮罩：半透明遮罩（DesignTokens 色板中的既有遮罩色）+ 居中提示文案
       if (this.isDragOver) {

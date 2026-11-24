@@ -162,7 +162,6 @@ export struct SessionMetaSection {
     .padding(DesignTokens.space.md)
     .backgroundColor($r('app.color.card_background'))
     .borderRadius(DesignTokens.radius.lg)
-    .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.border_light') })
     .alignItems(HorizontalAlign.Start)
     .id('session_detail_meta_section')
   }

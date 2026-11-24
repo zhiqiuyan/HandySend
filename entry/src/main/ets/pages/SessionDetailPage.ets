@@ -583,7 +583,6 @@ export struct SessionDetailPage {
     .padding(DesignTokens.space.md)
     .backgroundColor($r('app.color.card_background'))
     .borderRadius(DesignTokens.radius.lg)
-    .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.border_light') })
     .alignItems(HorizontalAlign.Center)
   }
 
@@ -651,7 +650,6 @@ export struct SessionDetailPage {
     .padding(DesignTokens.space.md)
     .backgroundColor($r('app.color.card_background'))
     .borderRadius(DesignTokens.radius.lg)
-    .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.border_light') })
     .alignItems(HorizontalAlign.Center)
   }
 
@@ -887,7 +885,6 @@ export struct SessionDetailPage {
     .padding(DesignTokens.space.md)
     .backgroundColor($r('app.color.card_background'))
     .borderRadius(DesignTokens.radius.lg)
-    .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.border_light') })
   }
 
   /**
@@ -961,7 +958,6 @@ export struct SessionDetailPage {
     .padding(DesignTokens.space.md)
     .backgroundColor($r('app.color.card_background'))
     .borderRadius(DesignTokens.radius.lg)
-    .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.border_light') })
     .alignItems(HorizontalAlign.Start)
   }
 
@@ -1048,7 +1044,6 @@ export struct SessionDetailPage {
               .padding(DesignTokens.space.md)
               .backgroundColor($r('app.color.card_background'))
               .borderRadius(DesignTokens.radius.lg)
-              .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.border_light') })
               .alignItems(HorizontalAlign.Start)
             } else {
               // 会话不存在（无效会话标识）：展示明确提示而非空白占位

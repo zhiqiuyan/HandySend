@@ -450,7 +450,6 @@ export struct GeneralSettingsSection {
     })
     .borderRadius(DesignTokens.radius.lg)
     .backgroundColor($r('app.color.card_background'))
-    .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.border_light') })
 
     // 本卡片是设置页首元素，不设顶部外边距：顶部间距由页内容器统一提供
   }

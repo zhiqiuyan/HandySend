@@ -408,7 +408,6 @@ export struct LocalDeviceSection {
         .width('100%')
         .borderRadius(DesignTokens.radius.lg)
         .backgroundColor($r('app.color.card_background'))
-        .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.border_light') })
         .margin({ top: DesignTokens.space.sm })
 
         // ── LocalSend：对端靠组播扫描与 HTTPS 看到的本机 ──
@@ -430,7 +429,6 @@ export struct LocalDeviceSection {
         .width('100%')
         .borderRadius(DesignTokens.radius.lg)
         .backgroundColor($r('app.color.card_background'))
-        .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.border_light') })
         .margin({ top: DesignTokens.space.sm })
 
         // ── 互传：对端靠 BLE 广播与 GATT 看到的本机 ──
@@ -451,7 +449,6 @@ export struct LocalDeviceSection {
         .width('100%')
         .borderRadius(DesignTokens.radius.lg)
         .backgroundColor($r('app.color.card_background'))
-        .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.border_light') })
         .margin({ top: DesignTokens.space.sm })
 
         // ── 网页：浏览器通过地址/二维码看到的本机服务 ──
@@ -468,7 +465,6 @@ export struct LocalDeviceSection {
         .width('100%')
         .borderRadius(DesignTokens.radius.lg)
         .backgroundColor($r('app.color.card_background'))
-        .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.border_light') })
         .margin({ top: DesignTokens.space.sm })
       }
       .width('100%')
@@ -511,7 +507,6 @@ export struct LocalDeviceSection {
           .width('100%')
           .borderRadius(DesignTokens.radius.lg)
           .backgroundColor($r('app.color.card_background'))
-          .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.border_light') })
           .margin({ top: DesignTokens.space.md })
         }
       }

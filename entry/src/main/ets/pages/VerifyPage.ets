@@ -99,7 +99,6 @@ export struct VerifyPage {
             .padding(DesignTokens.space.md)
             .backgroundColor($r('app.color.card_background'))
             .borderRadius(DesignTokens.radius.lg)
-            .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.border_light') })
 
             // 文本模式
             Column() {
@@ -118,7 +117,6 @@ export struct VerifyPage {
             .padding(DesignTokens.space.md)
             .backgroundColor($r('app.color.card_background'))
             .borderRadius(DesignTokens.radius.lg)
-            .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.border_light') })
           }
           // 关闭循环滑动（loop 默认开启，会导致标签可无限循环切换）
           .loop(false)

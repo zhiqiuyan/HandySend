@@ -152,7 +152,6 @@ export struct EmptyState {
       })
       .backgroundColor(this.useCard ? $r('app.color.card_background') : Color.Transparent)
       .borderRadius(this.useCard ? DesignTokens.radius.lg : 0)
-      .border({ width: this.useCard ? DesignTokens.component.borderSlim : 0, color: $r('app.color.border_light') })
     }
     .width('100%')
     .alignItems(HorizontalAlign.Center)

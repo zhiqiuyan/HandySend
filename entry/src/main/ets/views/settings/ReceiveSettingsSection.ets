@@ -152,7 +152,6 @@ export struct ReceiveSettingsSection {
       .width('100%')
       .backgroundColor($r('app.color.card_background'))
       .borderRadius(DesignTokens.radius.lg)
-      .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.border_light') })
     }
     .width('100%')
     .padding({ left: DesignTokens.space.md, right: DesignTokens.space.md, bottom: DesignTokens.space.lg })

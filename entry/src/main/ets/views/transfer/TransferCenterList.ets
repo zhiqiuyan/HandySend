@@ -29,6 +29,7 @@ import {
 } from '../../viewmodel/TransferCenterViewModel';
 import { SessionStatusBadge } from './SessionStatusBadge';
 import { copyText } from '../../utils/ClipboardUtil';
+import { FlowArc } from '../../components/scene/SceneKit';
 
 @ComponentV2
 export struct TransferCenterList {
@@ -258,19 +259,12 @@ export struct TransferCenterList {
                   if (!rowIsTerminal(ri.item.session)) {
                     if (rowHasByteProgress(ri.item.session)) {
                       Row({ space: DesignTokens.space.sm }) {
-                        Progress({
-                          value: rowPercent(ri.item.session),
-                          total: 100,
-                          type: ProgressType.Linear
-                        })
-                          .width('100%')
-                          .height(DesignTokens.size.progressBarHeight)
-                          .color($r('app.color.accent_blue'))
-                          .backgroundColor($r('app.color.border_light'))
+                        // 方向 B：柔光弧进度线（贝塞尔弧 + 渐进取色 + 端点光点）
+                        FlowArc({ progress: rowPercent(ri.item.session) })
                           .layoutWeight(1)
                         Text(Math.round(rowPercent(ri.item.session)) + '%')
                           .fontSize(DesignTokens.font.bodyS)
-                          .fontColor($r('app.color.text_secondary'))
+                          .fontColor($r('app.color.accent_blue_text'))
                           .width(DesignTokens.space.xl + 6)
                           .textAlign(TextAlign.End)
                       }
@@ -352,7 +346,6 @@ export struct TransferCenterList {
               .padding(DesignTokens.space.md)
               .backgroundColor($r('app.color.card_background'))
               .borderRadius(DesignTokens.radius.lg)
-              .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.border_light') })
               .alignItems(VerticalAlign.Center)
               .onClick(() => {
                 // 行标识与可勾选判定在行作用域内先行取定：ArkTS 不保留闭包内的判空收窄，

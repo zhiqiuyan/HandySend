@@ -311,11 +311,6 @@ export struct SendTargetZone {
         onAction: () => {
           this.onOpenWeb();
         },
-        links: this.emptyLinks(),
-        linksHint: this.emptyLinksHint(),
-        onLinkClick: (url: string) => {
-          this.openEmptyStateLink(url);
-        },
         useCard: true
       })
         .id('send_no_source')
@@ -325,11 +320,6 @@ export struct SendTargetZone {
         mainText: this.emptyText(),
         hintText: this.emptyHintVisible() ? this.emptyHint() : undefined,
         hintColor: $r('app.color.warning_orange'),
-        links: this.emptyLinks(),
-        linksHint: this.emptyLinksHint(),
-        onLinkClick: (url: string) => {
-          this.openEmptyStateLink(url);
-        },
         useCard: true
       })
         .id('send_no_devices')

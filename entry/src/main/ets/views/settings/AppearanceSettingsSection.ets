@@ -17,7 +17,7 @@ import {
   LANGUAGE_LIST, LanguageOption
 } from '../../common/LanguageConstants';
 import { uiObserver } from '@kit.ArkUI';
-import { DEFAULT_THEME, DEFAULT_NAV_BAR_STYLE } from '../../model/SettingsDefaults';
+import { DEFAULT_THEME } from '../../model/SettingsDefaults';
 import { subscribeOverlayClose, unsubscribeOverlayClose } from '../../utils/OverlayCloseBus';
 
 interface ThemeOption {
@@ -32,12 +32,6 @@ const THEME_OPTIONS: Array<ThemeOption> = [
   { value: 'dark', label: $r('app.string.theme_dark') }
 ];
 
-// 导航栏样式选项：传统平铺底栏为默认项，排在最前
-const NAV_BAR_STYLE_OPTIONS: Array<ThemeOption> = [
-  { value: 'traditional', label: $r('app.string.nav_bar_style_traditional') },
-  { value: 'floating', label: $r('app.string.nav_bar_style_floating') }
-];
-
 // 外观设置分组（主题/语言/滚动隐藏页签，从 SettingsContent 拆出）。
 @ComponentV2
 export struct AppearanceSettingsSection {
@@ -46,12 +40,10 @@ export struct AppearanceSettingsSection {
   @Require @Param viewModel: SettingsViewModel
   @Local isShowLanguageSheet: boolean = false
   @Local isShowThemeSheet: boolean = false
-  @Local isShowNavBarStyleSheet: boolean = false
   // 新传输直达详情前的弹层收起：本组件只处理自己打开的半模态
   private overlayCloseCallback: () => void = (): void => {
     this.isShowLanguageSheet = false;
     this.isShowThemeSheet = false;
-    this.isShowNavBarStyleSheet = false;
   }
 
   aboutToAppear(): void {
@@ -76,21 +68,6 @@ export struct AppearanceSettingsSection {
       }
     }
     return THEME_OPTIONS[0].label;
-  }
-
-  // 当前导航栏样式的显示名（未知值回退默认项）
-  private getNavBarStyleLabel(): ResourceStr {
-    for (let i = 0; i < NAV_BAR_STYLE_OPTIONS.length; i++) {
-      if (NAV_BAR_STYLE_OPTIONS[i].value === this.viewModel.navBarStyle) {
-        return NAV_BAR_STYLE_OPTIONS[i].label;
-      }
-    }
-    for (let i = 0; i < NAV_BAR_STYLE_OPTIONS.length; i++) {
-      if (NAV_BAR_STYLE_OPTIONS[i].value === DEFAULT_NAV_BAR_STYLE) {
-        return NAV_BAR_STYLE_OPTIONS[i].label;
-      }
-    }
-    return NAV_BAR_STYLE_OPTIONS[0].label;
   }
 
   // 切换主题：仅在新值与当前值不同时生效，避免初始化回灌时重复调用系统 API
@@ -158,7 +135,6 @@ export struct AppearanceSettingsSection {
       .width('100%')
       .backgroundColor($r('app.color.card_background'))
       .borderRadius(DesignTokens.radius.lg)
-      .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.border_light') })
     }
     .width('100%')
     .padding({ left: DesignTokens.space.md, right: DesignTokens.space.md, bottom: DesignTokens.space.lg })
@@ -210,58 +186,6 @@ export struct AppearanceSettingsSection {
       .width('100%')
       .backgroundColor($r('app.color.card_background'))
       .borderRadius(DesignTokens.radius.lg)
-      .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.border_light') })
-    }
-    .width('100%')
-    .padding({ left: DesignTokens.space.md, right: DesignTokens.space.md, bottom: DesignTokens.space.lg })
-  }
-
-  // 导航栏样式半屏弹窗：系统标题 + 卡片列表，选中项仅文字高亮（与主题弹窗同范式）
-  @Builder
-  navBarStyleSheetBuilder(): void {
-    Column() {
-      Column() {
-        List({ space: 0 }) {
-          ForEach(NAV_BAR_STYLE_OPTIONS, (item: ThemeOption, index: number) => {
-            ListItem() {
-              Column() {
-                Row() {
-                  Text(item.label)
-                    .fontSize(DesignTokens.font.bodyM)
-                    .fontColor(
-                      this.viewModel.navBarStyle === item.value ? $r('app.color.accent_blue') : $r('app.color.text_primary'))
-                    .fontWeight(this.viewModel.navBarStyle === item.value ? FontWeight.Bold : FontWeight.Normal)
-                    .layoutWeight(1)
-                }
-                .width('100%')
-                .padding({
-                  left: DesignTokens.space.lg,
-                  right: DesignTokens.space.lg,
-                  top: DesignTokens.space.md,
-                  bottom: DesignTokens.space.md
-                })
-                .constraintSize({ minHeight: DesignTokens.size.thumbSm })
-                .alignItems(VerticalAlign.Center)
-                .onClick(() => {
-                  this.viewModel.setNavBarStyleValue(item.value);
-                  this.isShowNavBarStyleSheet = false;
-                })
-                .id('settings_nav_bar_style_option')
-
-                if (index < NAV_BAR_STYLE_OPTIONS.length - 1) {
-                  Divider().color($r('app.color.border_light'))
-                }
-              }
-              .width('100%')
-            }
-          }, (item: ThemeOption) => item.value)
-        }
-        .width('100%')
-      }
-      .width('100%')
-      .backgroundColor($r('app.color.card_background'))
-      .borderRadius(DesignTokens.radius.lg)
-      .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.border_light') })
     }
     .width('100%')
     .padding({ left: DesignTokens.space.md, right: DesignTokens.space.md, bottom: DesignTokens.space.lg })
@@ -360,49 +284,6 @@ export struct AppearanceSettingsSection {
           keyboardAvoidMode: SheetKeyboardAvoidMode.TRANSLATE_AND_SCROLL
         })
 
-        // 导航栏样式入口（半屏弹窗二选一）
-        Row() {
-          Text($r('app.string.nav_bar_style_label'))
-            .fontSize(DesignTokens.font.bodyM)
-            .fontColor($r('app.color.text_primary'))
-            .layoutWeight(1)
-
-          Row() {
-            Text(this.getNavBarStyleLabel())
-              .fontSize(DesignTokens.font.bodyM)
-              .fontColor($r('app.color.text_tertiary'))
-              .maxLines(1)
-              .textOverflow({ overflow: TextOverflow.Ellipsis })
-              .textAlign(TextAlign.End)
-              .layoutWeight(1)
-              .margin({ right: DesignTokens.space.xxs })
-            SymbolGlyph($r('sys.symbol.chevron_forward'))
-              .fontSize(DesignTokens.font.subtitleL)
-              .fontColor([$r('app.color.text_secondary')])
-          }
-          .layoutWeight(1)
-          .justifyContent(FlexAlign.End)
-        }
-        .width('100%')
-        .padding({ top: DesignTokens.space.sm, bottom: DesignTokens.space.sm })
-        .constraintSize({ minHeight: DesignTokens.size.thumbSm })
-        .alignItems(VerticalAlign.Center)
-        .onClick(() => {
-          this.isShowNavBarStyleSheet = true;
-        })
-        .id('settings_nav_bar_style_entry')
-        .bindSheet($$this.isShowNavBarStyleSheet, this.navBarStyleSheetBuilder(), {
-          height: SheetSize.MEDIUM,
-          width: getSheetWidth(this.breakpointInfo.widthBreakpoint),
-          preferType: isWideWidth(this.breakpointInfo.widthBreakpoint) ? SheetType.CENTER : SheetType.BOTTOM,
-          blurStyle: BlurStyle.Regular,
-          title: {
-            title: $r('app.string.nav_bar_style_label'),
-            subtitle: ''
-          },
-          showClose: true
-        })
-
         // 滚动时隐藏页签开关
         Row() {
           Text($r('app.string.hide_tab_bar_on_scroll_label'))
@@ -436,7 +317,6 @@ export struct AppearanceSettingsSection {
       })
       .borderRadius(DesignTokens.radius.lg)
       .backgroundColor($r('app.color.card_background'))
-      .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.border_light') })
       .margin({ top: DesignTokens.space.sm })
     }
     .width('100%')

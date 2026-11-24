@@ -2,11 +2,11 @@
   "string": [
     {
       "name": "module_desc",
-      "value": "便捷快傳主模組，提供區域網路與互傳聯盟檔案收發功能"
+      "value": "鴻蒙分享主模組，提供區域網路與互傳聯盟檔案收發功能"
     },
     {
       "name": "EntryAbility_desc",
-      "value": "便捷快傳主畫面，用於區域網路與互傳聯盟裝置間收發檔案"
+      "value": "鴻蒙分享主畫面，用於區域網路與互傳聯盟裝置間收發檔案"
     },
     {
       "name": "EntryAbility_label",
@@ -234,7 +234,7 @@
     },
     {
       "name": "about_card_label",
-      "value": "關於便捷快傳"
+      "value": "關於鴻蒙分享"
     },
     {
       "name": "about_description",
@@ -278,11 +278,11 @@
     },
     {
       "name": "rate_description",
-      "value": "為便捷快傳評分"
+      "value": "為鴻蒙分享評分"
     },
     {
       "name": "rate_message",
-      "value": "覺得好用的話可以到應用市場為便捷快傳評分，助力專案更好發展"
+      "value": "覺得好用的話可以到應用市場為鴻蒙分享評分，助力專案更好發展"
     },
     {
       "name": "rate_hint",
@@ -338,7 +338,7 @@
     },
     {
       "name": "receive_directory_desc",
-      "value": "接收到的檔案預設儲存在「Download/便捷快傳」"
+      "value": "接收到的檔案預設儲存在「Download/鴻蒙分享」"
     },
     {
       "name": "receive_directory_huawei_share",
@@ -362,7 +362,7 @@
     },
     {
       "name": "receive_directory_fallback_toast",
-      "value": "原儲存目錄無法使用，已改為預設目錄：\nDownload/便捷快傳"
+      "value": "原儲存目錄無法使用，已改為預設目錄：\nDownload/鴻蒙分享"
     },
     {
       "name": "save_to_gallery_label",
@@ -455,18 +455,6 @@
     {
       "name": "theme_system",
       "value": "跟隨系統"
-    },
-    {
-      "name": "nav_bar_style_label",
-      "value": "導覽列樣式"
-    },
-    {
-      "name": "nav_bar_style_traditional",
-      "value": "傳統欄"
-    },
-    {
-      "name": "nav_bar_style_floating",
-      "value": "懸浮欄"
     },
     {
       "name": "hide_tab_bar_on_scroll_label",
@@ -622,7 +610,7 @@
     },
     {
       "name": "troubleshoot_remote_desc",
-      "value": "便捷快傳預設在同一區域網路內運作。\n如需跨網路傳輸，可使用異地組網工具（如 EasyTier 等）建立虛擬區域網路：\n① 在「設定 → LocalSend → 進階設定 → 網路介面」中開啟工具對應的網路介面；\n② 網頁傳輸還需在「設定 → 網頁傳輸 → 進階設定 → 網路介面」中允許該介面，並選擇對應位址。"
+      "value": "鴻蒙分享預設在同一區域網路內運作。\n如需跨網路傳輸，可使用異地組網工具（如 EasyTier 等）建立虛擬區域網路：\n① 在「設定 → LocalSend → 進階設定 → 網路介面」中開啟工具對應的網路介面；\n② 網頁傳輸還需在「設定 → 網頁傳輸 → 進階設定 → 網路介面」中允許該介面，並選擇對應位址。"
     },
     {
       "name": "troubleshoot_duplicate_title",
@@ -910,7 +898,7 @@
     },
     {
       "name": "feedback_mail_subject",
-      "value": "便捷快傳使用者反饋"
+      "value": "鴻蒙分享使用者反饋"
     },
     {
       "name": "feedback_mail_body_intro",
@@ -946,7 +934,7 @@
     },
     {
       "name": "about_handysend_version",
-      "value": "便捷快傳 版本"
+      "value": "鴻蒙分享 版本"
     },
     {
       "name": "about_protocol_version",

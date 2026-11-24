@@ -38,6 +38,8 @@ import { isLargeTransfer } from '../utils/LargeTransferUtil';
 import { formatSizeDetailed } from '../utils/FormatUtil';
 import { getStringSync } from '../utils/ResourceUtil';
 import { isMtaDevice, MtaSendRequest } from '../model/mta/MtaMainModels';
+import { SceneHomeHero } from './scene/SceneHomeHero';
+import { DeviceItemViewModel } from '../viewmodel/DeviceItemViewModel';
 
 const logger = getLogger(LogDomains.TRANSFER, 'HandySend:SendContent', '发送内容');
 
@@ -213,6 +215,21 @@ export struct SendContent {
     } else if (key === 'favorites') {
       this.onOpenFavorites();
     }
+  }
+
+  /**
+   * 合并 LocalSend 与互传联盟设备，供方向 B 信号场 Hero 绘制节点。
+   * 复用 ViewModel 已按协议开关过滤后的展示列表，返回新数组以触发 @Param 刷新。
+   */
+  private allDeviceViewModels(): DeviceItemViewModel[] {
+    let all: DeviceItemViewModel[] = []
+    for (let i = 0; i < this.viewModel.localDeviceItemViewModels.length; i++) {
+      all.push(this.viewModel.localDeviceItemViewModels[i])
+    }
+    for (let i = 0; i < this.viewModel.mtaDeviceItemViewModels.length; i++) {
+      all.push(this.viewModel.mtaDeviceItemViewModels[i])
+    }
+    return all
   }
 
   /** 设备详情页路由参数（目标区设备条目信息入口使用）。 */
@@ -1279,6 +1296,19 @@ export struct SendContent {
     Stack({ alignContent: Alignment.TopStart }) {
       Scroll(this.scroller) {
         Column() {
+          // ── 方向 B · 信号场 Hero：满版深蓝场景 + 涟漪/流动光点动画 + 诗性状态 + 玻璃卡 ──
+          // 设备来自真实发现列表；点击光点切换目标、点击发送复用本组件真实发送链路。
+          SceneHomeHero({
+            viewModel: this.viewModel,
+            devices: this.allDeviceViewModels(),
+            onSend: (device: DiscoveredDevice) => {
+              this.sendToSelectedDevice(device);
+            },
+            onInfo: (device: DiscoveredDevice) => {
+              this.onNavigateTo('DeviceDetailsPage', this.deviceNavParam(device));
+            }
+          })
+
           if (this.viewModel.localSendEnabled && !this.viewModel.serverReady) {
             Row({ space: DesignTokens.space.sm }) {
               SymbolGlyph($r('sys.symbol.exclamationmark_triangle'))
@@ -1308,7 +1338,6 @@ export struct SendContent {
             .padding(DesignTokens.space.md)
             .backgroundColor($r('app.color.warning_bg'))
             .borderRadius(DesignTokens.radius.lg)
-            .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.warning_orange') })
             .margin({ top: DesignTokens.space.md })
           }
 
@@ -1356,7 +1385,6 @@ export struct SendContent {
             .padding(DesignTokens.space.md)
             .backgroundColor($r('app.color.accent_blue_bg'))
             .borderRadius(DesignTokens.radius.lg)
-            .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.border_light') })
             .margin({ top: DesignTokens.space.md })
             .alignItems(VerticalAlign.Center)
           }
@@ -1405,7 +1433,6 @@ export struct SendContent {
             .padding(DesignTokens.space.md)
             .backgroundColor($r('app.color.accent_blue_bg'))
             .borderRadius(DesignTokens.radius.lg)
-            .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.border_light') })
             .margin({ top: DesignTokens.space.md })
             .alignItems(VerticalAlign.Center)
           }
@@ -1449,7 +1476,6 @@ export struct SendContent {
             .padding(DesignTokens.space.md)
             .borderRadius(DesignTokens.radius.lg)
             .backgroundColor($r('app.color.warning_bg'))
-            .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.warning_orange') })
             .margin({ top: DesignTokens.space.md })
           }
 
@@ -1469,7 +1495,6 @@ export struct SendContent {
             .padding(DesignTokens.space.md)
             .borderRadius(DesignTokens.radius.lg)
             .backgroundColor($r('app.color.warning_bg'))
-            .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.warning_orange') })
             .margin({ top: DesignTokens.space.md })
           }
 

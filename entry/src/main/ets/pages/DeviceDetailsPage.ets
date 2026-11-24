@@ -98,7 +98,6 @@ export struct DeviceDetailsPage {
             .padding(DesignTokens.space.md)
             .backgroundColor($r('app.color.card_background'))
             .borderRadius(DesignTokens.radius.lg)
-            .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.border_light') })
             .margin({ top: DesignTokens.space.md })
 
             // 操作按钮

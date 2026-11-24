@@ -2,11 +2,11 @@
   "string": [
     {
       "name": "module_desc",
-      "value": "便捷快传主模块，提供局域网与互传联盟文件收发功能"
+      "value": "鸿蒙分享主模块，提供局域网与互传联盟文件收发功能"
     },
     {
       "name": "EntryAbility_desc",
-      "value": "便捷快传主界面，用于局域网与互传联盟设备间收发文件"
+      "value": "鸿蒙分享主界面，用于局域网与互传联盟设备间收发文件"
     },
     {
       "name": "EntryAbility_label",
@@ -234,7 +234,7 @@
     },
     {
       "name": "about_card_label",
-      "value": "关于便捷快传"
+      "value": "关于鸿蒙分享"
     },
     {
       "name": "about_description",
@@ -278,11 +278,11 @@
     },
     {
       "name": "rate_description",
-      "value": "为便捷快传评分"
+      "value": "为鸿蒙分享评分"
     },
     {
       "name": "rate_message",
-      "value": "觉得好用的话可以到应用市场为便捷快传评分，助力项目更好的发展"
+      "value": "觉得好用的话可以到应用市场为鸿蒙分享评分，助力项目更好的发展"
     },
     {
       "name": "rate_hint",
@@ -338,7 +338,7 @@
     },
     {
       "name": "receive_directory_desc",
-      "value": "接收到的文件默认保存在「Download/便捷快传」"
+      "value": "接收到的文件默认保存在「Download/鸿蒙分享」"
     },
     {
       "name": "receive_directory_huawei_share",
@@ -362,7 +362,7 @@
     },
     {
       "name": "receive_directory_fallback_toast",
-      "value": "原保存目录不可用，已改为默认目录：\nDownload/便捷快传"
+      "value": "原保存目录不可用，已改为默认目录：\nDownload/鸿蒙分享"
     },
     {
       "name": "save_to_gallery_label",
@@ -455,18 +455,6 @@
     {
       "name": "theme_system",
       "value": "跟随系统"
-    },
-    {
-      "name": "nav_bar_style_label",
-      "value": "导航栏样式"
-    },
-    {
-      "name": "nav_bar_style_traditional",
-      "value": "传统栏"
-    },
-    {
-      "name": "nav_bar_style_floating",
-      "value": "悬浮栏"
     },
     {
       "name": "hide_tab_bar_on_scroll_label",
@@ -622,7 +610,7 @@
     },
     {
       "name": "troubleshoot_remote_desc",
-      "value": "便捷快传默认在同一局域网内工作。\n如需跨网络传输，可使用异地组网工具（如 EasyTier 等）建立虚拟局域网：\n① 在「设置 → LocalSend → 高级设置 → 网络接口」中开启工具对应的网络接口；\n② 网页传输还需在「设置 → 网页传输 → 高级设置 → 网络接口」中允许该接口，并选择对应地址。"
+      "value": "鸿蒙分享默认在同一局域网内工作。\n如需跨网络传输，可使用异地组网工具（如 EasyTier 等）建立虚拟局域网：\n① 在「设置 → LocalSend → 高级设置 → 网络接口」中开启工具对应的网络接口；\n② 网页传输还需在「设置 → 网页传输 → 高级设置 → 网络接口」中允许该接口，并选择对应地址。"
     },
     {
       "name": "troubleshoot_duplicate_title",
@@ -910,7 +898,7 @@
     },
     {
       "name": "feedback_mail_subject",
-      "value": "便捷快传用户反馈"
+      "value": "鸿蒙分享用户反馈"
     },
     {
       "name": "feedback_mail_body_intro",
@@ -946,7 +934,7 @@
     },
     {
       "name": "about_handysend_version",
-      "value": "便捷快传 版本"
+      "value": "鸿蒙分享 版本"
     },
     {
       "name": "about_protocol_version",

@@ -1,9 +1,9 @@
 /**
  * SendContentZone.ets — 发送页内容区
  *
- * 内容类型选择 + 暂存列表：无暂存内容时展示三列两行六个类型入口磁贴，有暂存内容时展示
- * 统计/添加/清空操作行与暂存条目列表（40vp 缩略图、48vp 行高、红色圆形移除按钮）；
- * 已选内容后再次添加时以锚在按钮下方的气泡复用同一组入口磁贴。
+ * 内容类型选择 + 暂存列表：无暂存内容时首页展示一栏横滑的六个类型入口磁贴（左右滑动浏览），
+ * 有暂存内容时展示统计/添加/清空操作行与暂存条目列表（40vp 缩略图、48vp 行高、红色圆形移除按钮）；
+ * 已选内容后再次添加时以锚在按钮下方的气泡复用三列两行入口磁贴（与首页横滑栏同源）。
  * 磁贴高度、图标与字号随宽度断点放大；暂存列表按条目数取整行（最多 4 行，超出内部滚动）。
  * 列表使用 List + Repeat 懒加载（只建可视区与预加载区的行），数百个文件不会一次性建树。
  */
@@ -19,6 +19,9 @@ import { getFileTypeIconResource } from '../../utils/FileTypeIconUtil';
 const ACTION_TILE_HEIGHT: WidthBreakpointType<number> = new WidthBreakpointType<number>(72, 96, 112, 128);
 const ACTION_ICON_SIZE: WidthBreakpointType<number> = new WidthBreakpointType<number>(24, 28, 32, 32);
 const ACTION_LABEL_FONT: WidthBreakpointType<number> = new WidthBreakpointType<number>(12, 12, 14, 14);
+
+// 首页文件入口：横向单排磁贴宽度（固定，一屏露出约 3 个，其余左右滑动浏览）
+const STRIP_TILE_WIDTH: number = 92;
 
 // 「添加文件」气泡内的紧凑尺寸：气泡宽度固定，不随窗口断点放大
 const ACTION_TILE_HEIGHT_COMPACT: number = 72;
@@ -175,6 +178,113 @@ export struct SendContentZone {
       action();
     })
     .id(itemId)
+  }
+
+  // 首页文件入口：横向单排、左右滑动。六个入口与气泡磁贴同源（pickAction + 系统粘贴控件），
+  // 仅布局从三列两行网格改为一栏横滑；每个磁贴固定宽度、不压缩，超出屏宽即可左右滚动。
+  @Builder
+  typePickerStrip() {
+    Scroll() {
+      Row({ space: DesignTokens.space.inner }) {
+        Column() {
+          this.pickAction($r('sys.symbol.doc_text_fill'), $r('app.string.send_file'), 'send_pick_file',
+            false, () => {
+              this.dispatchPick(() => {
+                this.viewModel.pickFiles();
+              });
+            })
+        }
+        .width(STRIP_TILE_WIDTH)
+        .height('100%')
+        .flexShrink(0)
+
+        // 文件夹：聚合为一个暂存条目，发送时展开为逐文件
+        Column() {
+          this.pickAction($r('sys.symbol.folder_fill'), $r('app.string.send_folder'), 'send_pick_folder',
+            false, () => {
+              this.dispatchPick(() => {
+                this.viewModel.pickFolder();
+              });
+            })
+        }
+        .width(STRIP_TILE_WIDTH)
+        .height('100%')
+        .flexShrink(0)
+
+        // 下载：文件选择器直接定位到 Download 目录
+        Column() {
+          this.pickAction($r('sys.symbol.arrowshape_down_to_line_fill'), $r('app.string.send_download'),
+            'send_pick_download', false, () => {
+              this.dispatchPick(() => {
+                this.viewModel.pickDownload();
+              });
+            })
+        }
+        .width(STRIP_TILE_WIDTH)
+        .height('100%')
+        .flexShrink(0)
+
+        // 图库：不设 MIMEType 即同时展示图片与视频并可混选
+        Column() {
+          this.pickAction($r('sys.symbol.picture_fill'), $r('app.string.send_media'), 'send_pick_media',
+            false, () => {
+              this.dispatchPick(() => {
+                this.viewModel.pickMedia();
+              });
+            })
+        }
+        .width(STRIP_TILE_WIDTH)
+        .height('100%')
+        .flexShrink(0)
+
+        // 粘贴：系统安全控件（PasteButton），底色与圆角与其它磁贴保持一致
+        Column() {
+          PasteButton({ icon: PasteIconStyle.LINES, text: PasteDescription.PASTE, buttonType: ButtonType.Normal })
+            .width('100%')
+            .height('100%')
+            .iconSize(ACTION_ICON_SIZE.getValue(this.breakpointInfo.widthBreakpoint))
+            .fontSize(ACTION_LABEL_FONT.getValue(this.breakpointInfo.widthBreakpoint))
+            .borderRadius(DesignTokens.radius.md)
+            .backgroundColor($r('app.color.page_background'))
+            .iconColor($r('app.color.clipboard_button_icon'))
+            .fontColor($r('app.color.clipboard_button_icon'))
+            .layoutDirection(SecurityComponentLayoutDirection.VERTICAL)
+            .onClick((_event: ClickEvent, result: PasteButtonOnClickResult) => {
+              if (result === PasteButtonOnClickResult.SUCCESS) {
+                this.dispatchPick(() => {
+                  this.onPaste();
+                });
+              }
+            })
+        }
+        .width(STRIP_TILE_WIDTH)
+        .height('100%')
+        .justifyContent(FlexAlign.Center)
+        .borderRadius(DesignTokens.radius.md)
+        .backgroundColor($r('app.color.page_background'))
+        .flexShrink(0)
+        .id('send_paste_strip')
+
+        Column() {
+          this.pickAction($r('sys.symbol.text_aligncenter'), $r('app.string.send_justify'), 'send_pick_justify',
+            false, () => {
+              this.dispatchPick(() => {
+                this.onTextInput();
+              });
+            })
+        }
+        .width(STRIP_TILE_WIDTH)
+        .height('100%')
+        .flexShrink(0)
+      }
+      .height(ACTION_TILE_HEIGHT.getValue(this.breakpointInfo.widthBreakpoint))
+    }
+    .scrollable(ScrollDirection.Horizontal)
+    .scrollBar(BarState.Off)
+    .edgeEffect(EdgeEffect.Spring)
+    .width('100%')
+    .height(ACTION_TILE_HEIGHT.getValue(this.breakpointInfo.widthBreakpoint))
+    .id('send_type_picker_strip')
   }
 
   // 磁贴动作统一分发：气泡未打开时直接执行；气泡打开时先收起，
@@ -418,7 +528,7 @@ export struct SendContentZone {
       // 内容卡片（页内标题行与常见问题入口已迁入外层标题栏）
       Column() {
         if (this.viewModel.stagedFiles.length === 0) {
-          this.typePicker(false)
+          this.typePickerStrip()
         } else {
           this.stagedSection()
         }
@@ -432,8 +542,7 @@ export struct SendContentZone {
       })
       .borderRadius(DesignTokens.radius.lg)
       .backgroundColor($r('app.color.card_background'))
-      .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.border_light') })
-      // 卡片高度随内容：空态为两行入口磁贴（72~128，随宽度断点），加入首个文件后长到列表高度
+      // 卡片高度随内容：空态为一行横滑入口磁贴（72~128，随宽度断点），加入首个文件后长到列表高度
       // 卡片成为内容区首元素：沿用原标题行的顶部间距，避免内容贴顶
       .margin({ top: DesignTokens.space.md })
     }

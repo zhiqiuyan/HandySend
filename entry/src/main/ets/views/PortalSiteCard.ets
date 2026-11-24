@@ -182,10 +182,6 @@ export struct PortalSiteCard {
     .padding(DesignTokens.space.md)
     .borderRadius(DesignTokens.radius.lg)
     .backgroundColor($r('app.color.card_background'))
-    .border({
-      width: DesignTokens.component.borderSlim,
-      color: $r('app.color.border_light')
-    })
     .alignItems(VerticalAlign.Center)
     .onClick((): void => {
       this.onOpen(this.site);

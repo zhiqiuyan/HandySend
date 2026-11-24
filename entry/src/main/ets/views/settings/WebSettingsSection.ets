@@ -330,7 +330,6 @@ export struct WebSettingsSection {
         .width('100%')
         .backgroundColor($r('app.color.card_background'))
         .borderRadius(DesignTokens.radius.lg)
-        .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.border_light') })
       }
 
       // 刷新按钮（次要操作，与卡片风格一致）
@@ -547,7 +546,6 @@ export struct WebSettingsSection {
       })
       .backgroundColor($r('app.color.card_background'))
       .borderRadius(DesignTokens.radius.lg)
-      .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.border_light') })
       .margin({ top: DesignTokens.space.sm })
     }
     .width('100%')

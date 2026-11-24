@@ -148,7 +148,6 @@ export struct HttpLogsPage {
       .padding(DesignTokens.space.md)
       .backgroundColor($r('app.color.card_background'))
       .borderRadius(DesignTokens.radius.lg)
-      .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.border_light') })
       .alignItems(HorizontalAlign.Start)
     }
     .width('100%')

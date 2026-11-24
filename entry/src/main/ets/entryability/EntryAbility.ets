@@ -71,6 +71,7 @@ import { readJsonString } from '../utils/JsonGuard';
 import { LogDomains } from '../common/LogDomains';
 import { initAllPreferences, flushAllPreferences } from '../utils/PreferencesUtil';
 import { flushAllSessionDraftLogs } from '../service/transfer/SessionDraftStore';
+import { setSceneDark } from '../common/SceneTokens';
 
 const logger = getLogger(LogDomains.GENERAL, 'HandySend:EntryAbility', '启动');
 
@@ -212,6 +213,9 @@ export default class EntryAbility extends UIAbility {
     // 已关闭的开关在启动瞬间失效。loadFromPreferences 为幂等读取，后续
     // initAppService 中再次调用无副作用。
     loadFromPreferences();
+
+    // 同步信号场场景色板：跟随当前生效的颜色模式（含跟随系统解析后的实际值）
+    this.syncSceneColorMode();
 
     // 初始化后台传输服务：订阅 changeBus + 注册长时任务取消监听（进程级幂等）
     initBackgroundTransferService();
@@ -713,10 +717,30 @@ export default class EntryAbility extends UIAbility {
 
   onConfigurationUpdate(newConfig: Configuration): void {
     logger.debug('Ability 配置更新（onConfigurationUpdate）：colorMode=' + JSON.stringify(newConfig.colorMode));
+    // 深浅色模式切换时同步信号场场景色板（Canvas 用），与全局资源色保持一致
+    this.syncSceneColorMode();
     // 深浅色模式切换时同步更新窗口背景色，避免避让区露出与页面不匹配的底色
     this.applyWindowBackgroundColor();
     // 注意：此处不再同步「跟随系统」语言——设置应用语言会触发本回调，若在此再次设置
     // 会形成无限递归（Stack overflow）；该同步已移至 onForeground 执行。
+  }
+
+  // 同步信号场场景色板（昼/夜）：读取当前生效的 page_background 资源色，
+  // 按相对亮度判断深浅。跟随系统（NOT_SET）时该资源已解析为系统当前模式，
+  // 比直接读 colorMode 更可靠。
+  private syncSceneColorMode(): void {
+    try {
+      const colorValue: number = this.context.resourceManager.getColorSync($r('app.color.page_background').id);
+      const r: number = (colorValue >> 16) & 0xFF;
+      const g: number = (colorValue >> 8) & 0xFF;
+      const b: number = colorValue & 0xFF;
+      const luminance: number = 0.299 * r + 0.587 * g + 0.114 * b;
+      setSceneDark(luminance < 128);
+      logger.debug('信号场场景色板已同步：' + (luminance < 128 ? '深色' : '浅色') +
+        '（page_background 亮度 ' + luminance.toFixed(1) + '）');
+    } catch (e) {
+      logger.warn('同步信号场场景色板失败：' + JSON.stringify(e));
+    }
   }
 
   // 将窗口背景色与页面背景色（page_background 资源）对齐。

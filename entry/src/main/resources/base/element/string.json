@@ -2,11 +2,11 @@
   "string": [
     {
       "name": "module_desc",
-      "value": "HandySend main module for LAN and MTA file sharing"
+      "value": "HarmonyShare main module for LAN and MTA file sharing"
     },
     {
       "name": "EntryAbility_desc",
-      "value": "HandySend main screen for sending and receiving files over LAN and MTA"
+      "value": "HarmonyShare main screen for sending and receiving files over LAN and MTA"
     },
     {
       "name": "EntryAbility_label",
@@ -234,7 +234,7 @@
     },
     {
       "name": "about_card_label",
-      "value": "About HandySend"
+      "value": "About HarmonyShare"
     },
     {
       "name": "about_description",
@@ -278,11 +278,11 @@
     },
     {
       "name": "rate_description",
-      "value": "Rate HandySend"
+      "value": "Rate HarmonyShare"
     },
     {
       "name": "rate_message",
-      "value": "If you find it useful, rate HandySend on AppGallery to help the project grow"
+      "value": "If you find it useful, rate HarmonyShare on AppGallery to help the project grow"
     },
     {
       "name": "rate_hint",
@@ -338,7 +338,7 @@
     },
     {
       "name": "receive_directory_desc",
-      "value": "Received files are saved in \"Download/HandySend\" by default"
+      "value": "Received files are saved in \"Download/HarmonyShare\" by default"
     },
     {
       "name": "receive_directory_huawei_share",
@@ -362,7 +362,7 @@
     },
     {
       "name": "receive_directory_fallback_toast",
-      "value": "The previous save location is unavailable. Files are saved to:\nDownload/HandySend"
+      "value": "The previous save location is unavailable. Files are saved to:\nDownload/HarmonyShare"
     },
     {
       "name": "save_to_gallery_label",
@@ -455,18 +455,6 @@
     {
       "name": "theme_system",
       "value": "Follow system"
-    },
-    {
-      "name": "nav_bar_style_label",
-      "value": "Navigation bar style"
-    },
-    {
-      "name": "nav_bar_style_traditional",
-      "value": "Standard"
-    },
-    {
-      "name": "nav_bar_style_floating",
-      "value": "Floating"
     },
     {
       "name": "hide_tab_bar_on_scroll_label",
@@ -622,7 +610,7 @@
     },
     {
       "name": "troubleshoot_remote_desc",
-      "value": "HandySend works within the same local network by default.\nFor cross-network transfers, use a virtual networking tool (e.g., EasyTier) to create a virtual LAN:\n1. Enable the corresponding network interface in Settings > LocalSend > Advanced settings > Network interface;\n2. For web transfer, also allow that interface in Settings > Web Transfer > Advanced settings > Network interface and select the matching address."
+      "value": "HarmonyShare works within the same local network by default.\nFor cross-network transfers, use a virtual networking tool (e.g., EasyTier) to create a virtual LAN:\n1. Enable the corresponding network interface in Settings > LocalSend > Advanced settings > Network interface;\n2. For web transfer, also allow that interface in Settings > Web Transfer > Advanced settings > Network interface and select the matching address."
     },
     {
       "name": "troubleshoot_duplicate_title",
@@ -910,7 +898,7 @@
     },
     {
       "name": "feedback_mail_subject",
-      "value": "HandySend user feedback"
+      "value": "HarmonyShare user feedback"
     },
     {
       "name": "feedback_mail_body_intro",
@@ -946,7 +934,7 @@
     },
     {
       "name": "about_handysend_version",
-      "value": "HandySend Version"
+      "value": "HarmonyShare Version"
     },
     {
       "name": "about_protocol_version",

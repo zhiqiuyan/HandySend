@@ -412,7 +412,6 @@ export struct NetworkSettingsSection {
         .width('100%')
         .backgroundColor($r('app.color.card_background'))
         .borderRadius(DesignTokens.radius.lg)
-        .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.border_light') })
       }
 
       // 刷新按钮（次要操作，与卡片风格一致）
@@ -526,7 +525,6 @@ export struct NetworkSettingsSection {
         .padding(DesignTokens.space.md)
         .borderRadius(DesignTokens.radius.lg)
         .backgroundColor($r('app.color.warning_bg'))
-        .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.warning_orange') })
         .margin({ top: DesignTokens.space.md })
       }
 
@@ -546,7 +544,6 @@ export struct NetworkSettingsSection {
         .padding(DesignTokens.space.md)
         .borderRadius(DesignTokens.radius.lg)
         .backgroundColor($r('app.color.warning_bg'))
-        .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.warning_orange') })
         .margin({ top: DesignTokens.space.md })
       } else if (this.viewModel.localSendEnabled && this.viewModel.allInterfacesDisabled &&
         this.viewModel.serverReady) {
@@ -563,7 +560,6 @@ export struct NetworkSettingsSection {
         .padding(DesignTokens.space.md)
         .borderRadius(DesignTokens.radius.lg)
         .backgroundColor($r('app.color.warning_bg'))
-        .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.warning_orange') })
         .margin({ top: DesignTokens.space.md })
       }
 
@@ -924,7 +920,6 @@ export struct NetworkSettingsSection {
       })
       .borderRadius(DesignTokens.radius.lg)
       .backgroundColor($r('app.color.card_background'))
-      .border({ width: DesignTokens.component.borderSlim, color: $r('app.color.border_light') })
       .margin({ top: DesignTokens.space.sm })
     }
     .width('100%')
